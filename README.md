@@ -25,6 +25,10 @@
 [![Quality Gate](http://sonarcloud.io/api/badges/measure?key=project-pieceofcake&metric=bugs)](https://sonarcloud.io/component_measures?id=project-pieceofcake&metric=bugs)
 [![Quality Gate](http://sonarcloud.io/api/badges/measure?key=project-pieceofcake&metric=code_smells)](https://sonarcloud.io/component_measures?id=project-pieceofcake&metric=code_smells)
 
+# zarvis Status:
+[![Quality Gate](https://sonarcloud.io/api/badges/gate?key=project-zarvis)](https://sonarcloud.io/dashboard?id=project-zarvis)
+[![Quality Gate](http://sonarcloud.io/api/badges/measure?key=project-zarvis&metric=coverage)](https://sonarcloud.io/component_measures?id=project-zarvis&metric=coverage)
+
 # MAAS Project - Team Name 
 
 Add a brief description of your project. Make sure to keep this README updated, particularly on how to run your project from the **command line**.
