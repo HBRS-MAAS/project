@@ -1,7 +1,5 @@
 package org.right_brothers.agents;
 
-import org.right_brothers.data.messages.TimeStep;
-
 import jade.core.Agent;
 import jade.core.AID;
 import jade.core.behaviours.*;
