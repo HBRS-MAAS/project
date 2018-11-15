@@ -1,35 +1,83 @@
 ## Input Message
 
-#### Order Message
-- customerId [String]
-- guid [String]
-- orderDate [json object]
-- deliveryDate [json object]
-- products [json object]
+### Order Message
 
-Order Date
-- day [int]
-- hour [int]
+#### ACL Message:
+- Performative: INFORM
+- Receiver: A Dough Manager Agent, which provides the service "Dough-Manager"
+- Content: json String
 
-Delivery Date
-- day [int]
-- hour [int]
+#### Content
 
-Product
--  Bagel: [int]
--  Donut: [int]
--  Berliner: [int]
--  Muffin: [int]
--  Bread: [int]
+```
+{
+    "customerId": String,
+    "guid": String,
+    "orderDate": {
+      "day": int,
+      "hour": int
+    },
+    "deliveryDate": {
+      "day": int,
+      "hour": int
+    },
+    "products": {
+      "Bagel": int,
+      "Donut": int,
+      "Berliner": int,
+      "Muffin": int,
+      "Bread": int
+}
+```
 
-Product is a json object. The key is the name of the product and the value is the quantity of each product type. We base this definition based on the sample json file. This is subject to change if the json message changes.
+#### Example Content
+
+
+```
+{
+    "customerId": "customer-001",
+    "guid": "order-331",
+    "orderDate": {
+      "day": 7,
+      "hour": 0
+    },
+    "deliveryDate": {
+      "day": 11,
+      "hour": 11
+    },
+    "products": {
+      "Bagel": 7,
+      "Donut": 1,
+      "Berliner": 5,
+      "Muffin": 2,
+      "Bread": 4
+}
+```
 
 
 ## Output Message
 
 #### Dough Notification Message
-- guid
+#### ACL Message:
+- Performative: INFORM
+- Receiver: A Baking Interface Agent, which provides the service "Baking-interface"
+- Content: json String
 
+#### Content
+
+```
+{
+    "guid": "String"
+}
+```
+
+#### Example Content
+
+```
+{
+    "guid": "order-331"
+}
+```
 
 The Dough Preparation stage is initialized with the information of the types of bread it can prepare dough for (as specified in the products field in the scenario)
 
