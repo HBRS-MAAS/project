@@ -5,17 +5,20 @@
 Following type of message is sent to an agent in packaging stage every time a product is finished with cooling process of recipe.
 
 -   **performative**: INFORM
--   **receiver**: TBD
+-   **sender**: AID of cooling-racks agent
+-   **receiver**: AID of an agent in packaging stage
+-   **conversation-id**: `"cooled-product-" + counter.toString()`
 -   **content**:
 ```
 {
     "products": {
-      "product_name": int,
-      "another_product_name": int,
+      String("product_name"): int(quantity),
+      String("another_product_name"): int(quantity),
       ... 
     }
 }
 ```
+**Note**: `counter` is an int which is incremented everytime a message is sent. It starts at 1.
 
 ### Example of content
 
@@ -29,22 +32,23 @@ Following type of message is sent to an agent in packaging stage every time a pr
       "Bread": 4
     }
 }
-
 ```
 
 **Note**:
 -   We recommend use of `CyclicBehaviour` which acts as a server inside the receiver for maximum compatibility.
 -   Cooling rack agent does not expect any reply for above message.
 
-# In messages
+## In messages
 
 -   **performative**: INFORM
--   **sender**: TBD
+-   **sender**: AID of oven manager
+-   **receiver**: AID of cooling-racks agent
+-   **conversation-id**: `"baked-products-" + counter.toString()`
 -   **content**:
 ```
 {
-    productName: String,
-    coolingRate: int,
+    productName: String("product_name"),
+    coolingRate: int(cooling_rate),
 }
 ```
 
