@@ -2,6 +2,10 @@ package org.maas.agents;
 
 import jade.core.AID;
 import jade.core.behaviours.*;
+import jade.domain.DFService;
+import jade.domain.FIPAException;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
@@ -19,6 +23,27 @@ public class TimedAgent extends BaseAgent{
      */
     protected void setup() {
         this.addBehaviour(new PermitAction());
+    }
+    
+    protected void register(String type, String name){
+        DFAgentDescription dfd = new DFAgentDescription();
+        dfd.setName(getAID());
+        ServiceDescription sd = new ServiceDescription();
+        sd.setType(type);
+        sd.setName(name);
+        dfd.addServices(sd);
+        
+        ServiceDescription sd_timing = new ServiceDescription();
+        sd_timing.setType("timed-agent");
+        sd_timing.setName(name);
+        dfd.addServices(sd_timing);
+        
+        try {
+            DFService.register(this, dfd);
+        }
+        catch (FIPAException fe) {
+            fe.printStackTrace();
+        }
     }
     
     /* This function sends finished message to clockAgent
