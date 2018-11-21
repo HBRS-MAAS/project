@@ -1,5 +1,7 @@
 package org.maas.agents;
 
+import java.util.ArrayList;
+
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.basic.Action;
@@ -12,7 +14,7 @@ import jade.lang.acl.ACLMessage;
 
 
 @SuppressWarnings("serial")
-public class DummyAgent extends Agent {
+public class DummyAgent extends TimedAgent {
 	protected void setup() {
 	// Printout a welcome message
 		System.out.println("Hello! Dummy-agent "+getAID().getName()+" is ready.");
@@ -23,6 +25,9 @@ public class DummyAgent extends Agent {
  			//e.printStackTrace();
  		}
 		addBehaviour(new shutdown());
+		ArrayList<String> services = new ArrayList<String>();
+		services.add("dummy-service");
+		register(services, "Dummy-Agent");
 
 	}
 	protected void takeDown() {

@@ -1,5 +1,7 @@
 package org.maas.agents;
 
+import java.util.ArrayList;
+
 import jade.core.Agent;
 import jade.domain.FIPAException;
 import jade.domain.DFService;
@@ -13,13 +15,18 @@ public abstract class BaseAgent extends Agent {
     /* This function registers the agent to yellow pages
      * Call this in `setup()` function
      */
-    protected void register(String type, String name){
+    protected void register(ArrayList<String> type, String name){
         DFAgentDescription dfd = new DFAgentDescription();
         dfd.setName(getAID());
-        ServiceDescription sd = new ServiceDescription();
-        sd.setType(type);
-        sd.setName(name);
-        dfd.addServices(sd);
+        
+        for (int i = 0; i < type.size(); i++)
+        {
+            ServiceDescription sd = new ServiceDescription();
+            sd.setType(type.get(i));
+            sd.setName(name);
+            dfd.addServices(sd);
+        }
+        
         try {
             DFService.register(this, dfd);
         }
