@@ -1,25 +1,31 @@
-package org.mas_maas.agents;
+package org.maas.agents;
 
 import java.util.Vector;
 
-import org.mas_maas.JSONConverter;
-import org.mas_maas.messages.DoughNotification;
-import org.mas_maas.messages.ProofingRequest;
+import org.maas.JSONConverter;
+import org.maas.messages.DoughNotification;
+import org.maas.messages.ProofingRequest;
 
 import com.google.gson.Gson;
 
+import jade.content.lang.Codec;
+import jade.content.lang.sl.SLCodec;
+import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
+import jade.domain.FIPANames;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.JADEAgentManagement.JADEManagementOntology;
+import jade.domain.JADEAgentManagement.ShutdownPlatform;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
 public class Proofer extends BaseAgent {
-    private AID [] doughManagerAgents;
     private AID [] bakingInterfaceAgents;
 
     private Vector<String> guids;
@@ -37,6 +43,14 @@ public class Proofer extends BaseAgent {
         this.getBakingInterfaceAIDs();
 
         addBehaviour(new ReceiveProofingRequests());
+        
+        // This agent receives a ProofingRequest, executes it ands sends a DoughNotification to the interface agent of the Baking Stage.
+        
+        
+        // For now we terminate the agent here because the other agents are not part of this repository.
+        // Remove this if you wish to use this agent in your architecture.
+        baseAgent.doDelete();
+        
     }
 
     protected void takeDown() {
@@ -45,6 +59,7 @@ public class Proofer extends BaseAgent {
     }
 
     public void getDoughManagerAIDs() {
+        AID [] doughManagerAgents;
         DFAgentDescription template = new DFAgentDescription();
         ServiceDescription sd = new ServiceDescription();
 
@@ -160,12 +175,9 @@ public class Proofer extends BaseAgent {
         private AID [] bakingInterfaceAgents;
         private MessageTemplate mt;
         private int option = 0;
-
-        Gson gson = new Gson();
-
-        DoughNotification doughNotification = new DoughNotification(guids,productType);
-
-        String doughNotificationString = gson.toJson(doughNotification);
+        private Gson gson = new Gson();
+        private DoughNotification doughNotification = new DoughNotification(guids,productType);
+        private String doughNotificationString = gson.toJson(doughNotification);
 
         public SendDoughNotification(AID [] bakingInterfaceAgents){
             this.bakingInterfaceAgents = bakingInterfaceAgents;
@@ -228,4 +240,5 @@ public class Proofer extends BaseAgent {
             return false;
         }
     }
+   
 }
