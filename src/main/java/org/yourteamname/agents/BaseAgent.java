@@ -1,4 +1,4 @@
-package org.right_brothers.agents;
+package org.maas.agents;
 
 import org.right_brothers.data.messages.TimeStep;
 
@@ -74,7 +74,7 @@ public abstract class BaseAgent extends Agent {
     }
 
     protected boolean getAllowAction() {
-        return this.allowAction;
+        return allowAction;
     }
     protected int getCurrentDay() {
         return currentDay;
