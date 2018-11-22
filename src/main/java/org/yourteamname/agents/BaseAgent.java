@@ -1,7 +1,5 @@
 package org.maas.agents;
 
-import org.right_brothers.data.messages.TimeStep;
-
 import jade.core.Agent;
 import jade.core.AID;
 import jade.core.behaviours.*;
@@ -90,25 +88,25 @@ public abstract class BaseAgent extends Agent {
      * */
     protected void sendMessage(ACLMessage msg) {
         this.send(msg);
-//         this.visualiseHistoricalView(msg);
-//         this.visualiseIndividualOrderStatus(msg);
-//         this.visualiseMessageQueuesByAgent(msg);
-//         this.visualiseOrderBoard(msg);
-//         this.visualiseStreetNetwork(msg);
+        this.visualiseHistoricalView(msg);
+        this.visualiseIndividualOrderStatus(msg);
+        this.visualiseMessageQueuesByAgent(msg);
+        this.visualiseOrderBoard(msg);
+        this.visualiseStreetNetwork(msg);
     }
 
     /* implementation skeleton code for different visualisation methods
      */
-//     protected void visualiseHistoricalView(ACLMessage msg) {
-//     }
-//     protected void visualiseIndividualOrderStatus(ACLMessage msg) {
-//     }
-//     protected void visualiseMessageQueuesByAgent(ACLMessage msg) {
-//     }
-//     protected void visualiseOrderBoard(ACLMessage msg) {
-//     }
-//     protected void visualiseStreetNetwork(ACLMessage msg) {
-//     }
+    protected void visualiseHistoricalView(ACLMessage msg) {
+    }
+    protected void visualiseIndividualOrderStatus(ACLMessage msg) {
+    }
+    protected void visualiseMessageQueuesByAgent(ACLMessage msg) {
+    }
+    protected void visualiseOrderBoard(ACLMessage msg) {
+    }
+    protected void visualiseStreetNetwork(ACLMessage msg) {
+    }
 
 
     /* Behaviour to receive message from clockAgent to proceed further with
