@@ -1,0 +1,12 @@
+{
+  "products": 30,
+  "bakeries": 5,
+  "durationInDays": 30,
+  "orders": 1041,
+  "customers": {
+    "1": 15,
+    "2": 5,
+    "3": 10
+  },
+  "delivery": 5
+}
