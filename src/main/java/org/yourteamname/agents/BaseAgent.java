@@ -1,4 +1,4 @@
-package org.right_brothers.agents;
+package org.maas.agents;
 
 import jade.core.Agent;
 import jade.core.AID;
@@ -114,10 +114,9 @@ public abstract class BaseAgent extends Agent {
      */
     private class PermitAction extends CyclicBehaviour {
         private MessageTemplate mt;
-        private BaseAgent ba;
 
         public void action(){
-            this.mt = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM),
+            this.mt = MessageTemplate.and(MessageTemplate.MatchPerformative(55),
                     MessageTemplate.MatchSender(baseAgent.clockAgent));
             ACLMessage msg = myAgent.receive(this.mt);
             if (msg != null) {
