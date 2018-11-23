@@ -2,7 +2,7 @@ package org.maas.messages;
 
 import java.util.Vector;
 
-public class KneadingRequest extends DoughMessage {
+public class KneadingRequest extends GenericGuidMessage {
     private float kneadingTime;
 
     public KneadingRequest(Vector<String> guids, String productType, float kneadingTime) {

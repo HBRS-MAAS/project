@@ -2,12 +2,12 @@ package org.maas.messages;
 
 import java.util.Vector;
 
-public abstract class DoughMessage {
+public abstract class GenericGuidMessage {
 
     private Vector<String> guids;
     private String productType;
 
-    public DoughMessage(Vector<String> guids, String productType) {
+    public GenericGuidMessage(Vector<String> guids, String productType) {
         this.guids = guids;
         this.productType = productType;
     }

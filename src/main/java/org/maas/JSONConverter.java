@@ -46,16 +46,12 @@ public class JSONConverter
     {
         String sampleDir = "src/main/resources/config/sample/";
         String doughDir = "src/main/resources/config/dough_stage_communication/";
+        String bakingDir = "src/main/resources/config/baking_stage_communication/";
+
         try {
             //System.out.println("Working Directory = " + System.getProperty("user.dir"));
 
-            String bakeryFile = new Scanner(new File(sampleDir + "bakeries.json")).useDelimiter("\\Z").next();
-            Vector<Bakery> bakeries = parseBakeries(bakeryFile);
-            for (Bakery bakery : bakeries)
-            {
-                System.out.println(bakery);
-            }
-
+ 
             String clientFile = new Scanner(new File(sampleDir + "clients.json")).useDelimiter("\\Z").next();
             Vector<Client> clients = parseClients(clientFile);
             for (Client client : clients)
@@ -102,134 +98,13 @@ public class JSONConverter
             ProofingRequest proofingRequest = parseProofingRequest(proofingRequestString);
             System.out.println(proofingRequest);
 
-
-
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
-    public static Vector<Bakery> parseBakeries(String jsonFile)
-    {
-        JsonElement root = new JsonParser().parse(jsonFile);
-        JsonArray arr = root.getAsJsonArray();
-
-        Vector<Bakery> bakeries = new Vector<Bakery>();
-        for (JsonElement element : arr)
-        {
-            // bakery
-            JsonObject jsonBakery = element.getAsJsonObject();
-            String guid = jsonBakery.get("guid").getAsString();
-            String name = jsonBakery.get("name").getAsString();
-            JsonObject jsonLocation = (JsonObject) jsonBakery.get("location");
-            Double x = jsonLocation.get("x").getAsDouble();
-            Double y = jsonLocation.get("y").getAsDouble();
-            Point2D location = new Point2D.Double(x, y);
-
-            // products
-            Vector<Product> products = new Vector<Product>();
-            JsonArray jsonProducts = jsonBakery.get("products").getAsJsonArray();
-            for (JsonElement product : jsonProducts)
-            {
-                JsonObject jsonProduct = product.getAsJsonObject();
-                String productGuid = jsonProduct.get("guid").getAsString();
-
-                JsonObject jsonBatch = jsonProduct.get("batch").getAsJsonObject();
-                int breadsPerOven = jsonBatch.get("breadsPerOven").getAsInt();
-                Batch batch = new Batch(breadsPerOven);
-
-                JsonObject jsonRecipe = jsonProduct.get("recipe").getAsJsonObject();
-                int coolingRate = jsonRecipe.get("coolingRate").getAsInt();
-                int bakingTemp = jsonRecipe.get("bakingTemp").getAsInt();
-
-                JsonArray stepArray = jsonRecipe.get("steps").getAsJsonArray();
-                Vector<Step> steps = new Vector<Step>();
-                for (JsonElement step : stepArray)
-                {
-                    JsonObject jsonStep = step.getAsJsonObject();
-                    String action = jsonStep.get("action").getAsString();
-                    Float duration = jsonStep.get("duration").getAsFloat();
-                    Step aStep = new Step(action, duration);
-                    steps.add(aStep);
-                }
-                Recipe recipe = new Recipe(coolingRate, bakingTemp, steps);
-
-                JsonObject jsonPackaging = jsonProduct.get("packaging").getAsJsonObject();
-                int boxingTemp = jsonPackaging.get("boxingTemp").getAsInt();
-                int breadsPerBox = jsonPackaging.get("breadsPerBox").getAsInt();
-                Packaging packaging = new Packaging(boxingTemp, breadsPerBox);
-
-                Double salesPrice = jsonProduct.get("salesPrice").getAsDouble();
-                Double productionCost = jsonProduct.get("productionCost").getAsDouble();
-
-                Product aProduct = new Product(productGuid, batch, recipe, packaging, salesPrice,  productionCost);
-                products.add(aProduct);
-            }
-
-
-            // equipment
-            Vector<Equipment> equipment = new Vector<Equipment>();
-            JsonObject jsonEquipment = jsonBakery.get("equipment").getAsJsonObject();
-            JsonArray ovens = jsonEquipment.get("ovens").getAsJsonArray();
-            for (JsonElement oven : ovens)
-            {
-                JsonObject jsonOven = oven.getAsJsonObject();
-                String ovenGuid = jsonOven.get("guid").getAsString();
-
-                // multiple ways of denoting rates (CamelCase and _ are used)
-                // TODO cleanup and make into a function
-                int coolingRate = -1;
-                if (jsonOven.toString().contains("coolingRate"))
-                {
-                    coolingRate = jsonOven.get("coolingRate").getAsInt();
-                }
-                else if (jsonOven.toString().contains("cooling_rate"))
-                {
-                    coolingRate = jsonOven.get("cooling_rate").getAsInt();
-                }
-
-                // TODO cleanup and make into a function
-                int heatingRate = -1;
-                if (jsonOven.toString().contains("heatingRate"))
-                {
-                    heatingRate = jsonOven.get("heatingRate").getAsInt();
-                }
-                else if (jsonOven.toString().contains("heating_rate"))
-                {
-                    heatingRate = jsonOven.get("heating_rate").getAsInt();
-                }
-
-                Oven anOven = new Oven(ovenGuid, coolingRate, heatingRate);
-                equipment.add(anOven);
-            }
-
-            JsonArray doughPrepTables = jsonEquipment.get("doughPrepTables").getAsJsonArray();
-            for (JsonElement table : doughPrepTables)
-            {
-                JsonObject jsonTable = table.getAsJsonObject();
-                String tableGuid = jsonTable.get("guid").getAsString();
-
-                DoughPrepTable aTable = new DoughPrepTable(tableGuid);
-                equipment.add(aTable);
-            }
-
-            JsonArray kneadingMachines = jsonEquipment.get("kneadingMachines").getAsJsonArray();
-            for (JsonElement kneadingMachine : kneadingMachines)
-            {
-                JsonObject jsonKneadingMachine = kneadingMachine.getAsJsonObject();
-                String kneadingMachineGuid = jsonKneadingMachine.get("guid").getAsString();
-
-                KneadingMachine aMachine = new KneadingMachine(kneadingMachineGuid);
-                equipment.add(aMachine);
-            }
-
-            Bakery bakery = new Bakery(guid, name, location, products, equipment);
-            bakeries.add(bakery);
-        }
-
-        return bakeries;
-    }
+    
 
     public static Vector<Client> parseClients(String jsonFile)
     {
@@ -417,7 +292,14 @@ public class JSONConverter
             guids.add(guid.getAsString());
         }
 
-        DoughNotification doughNotification = new DoughNotification(guids, productType);
+        Vector<Integer> productQuantities = new Vector<Integer>();
+        JsonArray jsonProductQuantities = jsonDoughNotification.get("productQuantities").getAsJsonArray();
+        for (JsonElement productQuantitie : jsonProductQuantities)
+        {
+            productQuantities.add(productQuantitie.getAsInt());
+        }
+
+        DoughNotification doughNotification = new DoughNotification(guids, productType, productQuantities);
         return doughNotification;
     }
 
@@ -525,7 +407,15 @@ public class JSONConverter
             guids.add(guid.getAsString());
         }
 
-        ProofingRequest proofingRequest = new ProofingRequest(productType, guids, proofingTime);
+        Vector<Integer> productQuantities = new Vector<Integer>();
+        JsonArray jsonProductQuantities = jsonProofingRequest.get("productQuantities").getAsJsonArray();
+        for (JsonElement productQuantitie : jsonProductQuantities)
+        {
+            productQuantities.add(productQuantitie.getAsInt());
+        }
+
+        ProofingRequest proofingRequest = new ProofingRequest(productType, guids, proofingTime, productQuantities);
         return proofingRequest;
     }
+
 }

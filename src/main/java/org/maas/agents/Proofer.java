@@ -30,6 +30,7 @@ public class Proofer extends BaseAgent {
 
     private Vector<String> guids;
     private String productType;
+    private Vector<Integer> productQuantities;
 
     protected void setup() {
         super.setup();
@@ -43,19 +44,19 @@ public class Proofer extends BaseAgent {
         this.getBakingInterfaceAIDs();
 
         addBehaviour(new ReceiveProofingRequests());
-        
+
         // This agent receives a ProofingRequest, executes it ands sends a DoughNotification to the interface agent of the Baking Stage.
-        
-        
+
+
         // For now we terminate the agent here because the other agents are not part of this repository.
         // Remove this if you wish to use this agent in your architecture.
         baseAgent.doDelete();
-        
+
     }
 
     protected void takeDown() {
         System.out.println(getAID().getLocalName() + ": Terminating.");
-        this.deRegister();
+        baseAgent.deRegister();
     }
 
     public void getDoughManagerAIDs() {
@@ -176,7 +177,7 @@ public class Proofer extends BaseAgent {
         private MessageTemplate mt;
         private int option = 0;
         private Gson gson = new Gson();
-        private DoughNotification doughNotification = new DoughNotification(guids,productType);
+        private DoughNotification doughNotification = new DoughNotification(guids, productType, productQuantities);
         private String doughNotificationString = gson.toJson(doughNotification);
 
         public SendDoughNotification(AID [] bakingInterfaceAgents){
@@ -240,5 +241,5 @@ public class Proofer extends BaseAgent {
             return false;
         }
     }
-   
+
 }
