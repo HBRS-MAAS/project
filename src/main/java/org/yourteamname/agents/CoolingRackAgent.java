@@ -9,21 +9,25 @@ import java.util.*;
 import java.io.IOException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
-import org.maas.data.messages.BakedProductMessage;
-import org.maas.data.messages.ProductMessage;
-import org.maas.utils.JsonConverter;
+import org.right_brothers.agents.BaseAgent;
+import org.right_brothers.objects.ProcessedProduct;
+import org.right_brothers.data.messages.ProductMessage;
+import org.right_brothers.utils.JsonConverter;
 
 @SuppressWarnings("serial")
 public class CoolingRackAgent extends BaseAgent{
     private AID LOADING_BAY_AGENT = new AID("dummy", AID.ISLOCALNAME);
-    private List<BakedProductMessage> bakedProducts;
+    private AID intermediater = new AID("intermediater", AID.ISLOCALNAME);
+    private List<ProcessedProduct> processedProducts;
     
     protected void setup() {
+        super.setup();
         System.out.println("\tHello! cooling-rack "+getAID().getLocalName()+" is ready.");
         
         this.register("cooling-rack-agent", "JADE-bakery");
-        this.bakedProducts = new ArrayList<BakedProductMessage> ();
-        addBehaviour(new BakedProdutsServer());
+        this.processedProducts = new ArrayList<ProcessedProduct> ();
+
+        addBehaviour(new ProcessedProductsServer(this.intermediater));
         addBehaviour(new CoolProducts());
     }
     protected void takeDown() {
@@ -33,59 +37,93 @@ public class CoolingRackAgent extends BaseAgent{
     
     private class CoolProducts extends CyclicBehaviour{
         public void action(){
-            ArrayList<BakedProductMessage> temp = new ArrayList<BakedProductMessage> ();
-            for (BakedProductMessage pm : bakedProducts) {
-                //if (this.getCurrentHour() == pm.getProcessStartTime() + pm.getBakingDuration()){
-                //if (pm.getCooled()){
-                System.out.println("\tBaked " + pm.getGuid() + " at time " + baseAgent.getCurrentHour());
-                temp.add(pm);
-                //}
-                //else {
-                    //TODO: start cooling
-                    //pm.setIsBaking(true);
-                    //pm.setProcessStartTime(this.getCurrentHour());
-                //}
+            if (!baseAgent.getAllowAction()) {
+                return;
             }
-            if (temp.size() > 0) {
-                Hashtable<String,Integer> outMsg = new Hashtable<String,Integer> ();
-                for (BakedProductMessage pm : temp) {
-                    outMsg.put(pm.getGuid(), pm.getQuantity());
+            if (baseAgent.getCurrentHour() <= 12) {
+                ArrayList<ProcessedProduct> message = this.getCooledProducts();
+                if (message.size() > 0) {
+                    this.sendProducts(message);
                 }
-                ProductMessage p = new ProductMessage();
-                p.setProducts(outMsg);
-                String messageContent = JsonConverter.getJsonString(p);
-                ACLMessage loadingBayMessage = new ACLMessage(ACLMessage.INFORM);
-                loadingBayMessage.addReceiver(LOADING_BAY_AGENT);
-                loadingBayMessage.setConversationId("baked-products-152");
-                loadingBayMessage.setContent(messageContent);
-                baseAgent.sendMessage(loadingBayMessage);
             }
-            for (BakedProductMessage pm : temp)
-                bakedProducts.remove(pm);
+            if (baseAgent.getCurrentHour() == 12){
+                this.haltCooling();
+            }
+            baseAgent.finished();
+        }
+        private void haltCooling() {
+            for (ProcessedProduct pp : processedProducts) {
+                if (pp.getProcessStartTime() >= 0){
+                    int alreadyProcessed = baseAgent.getCurrentHour() - pp.getProcessStartTime();
+                    int oldDuration = pp.getCoolingDuration();
+                    pp.setCoolingDuration(oldDuration - alreadyProcessed);
+                    pp.setProcessStartTime(-1);
+                    System.out.println("\tHalted Cooling " + pp.getQuantity() + " " + pp.getGuid() + " at time " + baseAgent.getCurrentHour());
+                }
+            }
+        }
+        private ArrayList<ProcessedProduct> getCooledProducts() {
+            ArrayList<ProcessedProduct> temp = new ArrayList<ProcessedProduct> ();
+            for (ProcessedProduct pm : processedProducts) {
+                if (pm.getProcessStartTime() < 0){
+                    if (baseAgent.getCurrentHour() + pm.getCoolingDuration() + 1 > 12)
+                        continue;
+                    pm.setProcessStartTime(baseAgent.getCurrentHour());
+                    System.out.println("\tStarted cooling " + pm.getQuantity() + " " + pm.getGuid() + " at time " + baseAgent.getCurrentHour());
+                }
+                if (baseAgent.getCurrentHour() >= pm.getProcessStartTime() + pm.getCoolingDuration() + 1){
+                    System.out.println("\tCooled " + pm.getGuid() + " at time " + baseAgent.getCurrentHour());
+                    temp.add(pm);
+                }
+            }
+            for (ProcessedProduct pm : temp)
+                processedProducts.remove(pm);
+            return temp;
+        }
+        private void sendProducts(ArrayList<ProcessedProduct> temp){
+            Hashtable<String,Integer> outMsg = new Hashtable<String,Integer> ();
+            for (ProcessedProduct pm : temp) {
+                outMsg.put(pm.getGuid(), pm.getQuantity());
+            }
+            ProductMessage p = new ProductMessage();
+            p.setProducts(outMsg);
+            String messageContent = JsonConverter.getJsonString(p);
+            ACLMessage loadingBayMessage = new ACLMessage(ACLMessage.INFORM);
+            loadingBayMessage.addReceiver(LOADING_BAY_AGENT);
+            loadingBayMessage.setConversationId("baked-products-152");
+            loadingBayMessage.setContent(messageContent);
+            baseAgent.sendMessage(loadingBayMessage);
         }
     }
 
-    private class BakedProdutsServer extends CyclicBehaviour {
+    private class ProcessedProductsServer extends CyclicBehaviour {
+        private MessageTemplate mt;
+        private AID sender;
+
+        public ProcessedProductsServer (AID sender){
+            this.sender = sender;
+        }
         public void action() {
-            MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
+            this.mt = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM),
+                    MessageTemplate.MatchSender(this.sender));
             ACLMessage msg = myAgent.receive(mt);
             if (msg != null) {
                 System.out.println(String.format("\tcooling-rack::Received message from oven-manager %s", 
                         msg.getSender().getName()));
                 String messageContent = msg.getContent();
                 System.out.println(String.format("\tmessage:: %s", messageContent));
-                ArrayList<BakedProductMessage> receivedBakedProducts = this.parseBakedProducts(messageContent);
-                bakedProducts.addAll(receivedBakedProducts);
+                ArrayList<ProcessedProduct> receivedProcessedProducts = this.parseProcessedProducts(messageContent);
+                processedProducts.addAll(receivedProcessedProducts);
             }
             else {
                 block();
             }
         }
-        private ArrayList<BakedProductMessage> parseBakedProducts(String orderString){
+        private ArrayList<ProcessedProduct> parseProcessedProducts(String orderString){
             ObjectMapper mapper = new ObjectMapper();
-            TypeReference<?> type = new TypeReference<ArrayList<BakedProductMessage>>(){};
+            TypeReference<?> type = new TypeReference<ArrayList<ProcessedProduct>>(){};
             try {
-                ArrayList<BakedProductMessage> data = mapper.readValue(orderString, type);
+                ArrayList<ProcessedProduct> data = mapper.readValue(orderString, type);
                 return data;
             } catch(IOException e) {
                 e.printStackTrace();

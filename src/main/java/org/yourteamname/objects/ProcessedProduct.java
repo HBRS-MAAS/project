@@ -1,13 +1,17 @@
-package org.maas.data.messages;
+package org.maas.objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BakedProductMessage implements java.io.Serializable {
+public class ProcessedProduct implements java.io.Serializable {
     private String guid;
-    private int coolingRate;
     private int coolingDuration;
     private int quantity;
+    private int processStartTime;
+
+    public ProcessedProduct(){
+        this.processStartTime = -1;
+    }
     
     public void setGuid(String id) {
         this.guid = id;
@@ -15,14 +19,6 @@ public class BakedProductMessage implements java.io.Serializable {
 
     public String getGuid() {
         return this.guid;
-    }
-
-    public void setCoolingRate(int coolingRate) {
-        this.coolingRate = coolingRate;
-    }
-
-    public int getCoolingRate() {
-        return coolingRate;
     }
 
     public void setCoolingDuration(int coolingDuration) {
@@ -39,6 +35,14 @@ public class BakedProductMessage implements java.io.Serializable {
 
     public int getQuantity() {
         return quantity;
+    }
+
+    public void setProcessStartTime(int processStartTime) {
+        this.processStartTime = processStartTime;
+    }
+
+    public int getProcessStartTime() {
+        return processStartTime;
     }
 
 }
