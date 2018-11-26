@@ -1,4 +1,4 @@
-package org.right_brothers.agents;
+package org.maas.agents;
 
 import jade.core.Agent;
 import jade.core.AID;
