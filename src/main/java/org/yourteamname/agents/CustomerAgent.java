@@ -16,7 +16,11 @@ import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -29,7 +33,6 @@ import java.util.Random;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.maas.utils.Data;
 
 @SuppressWarnings("serial")
 public class CustomerAgent extends BaseAgent {	
@@ -37,9 +40,13 @@ public class CustomerAgent extends BaseAgent {
 	private JSONObject confirmation = new JSONObject();
 	private JSONObject combined = new JSONObject();
 	
+	private JSONArray dataArray = new JSONArray();
+	private JSONArray orders = new JSONArray();
+	//private JSONObject location = new JSONObject();
+	private Object location = null;
+	
 	private String agentName = "";
 	
-	private Data customer = new Data();
 	private int n = 0;
 	private int total = 0;
 	
@@ -53,8 +60,8 @@ public class CustomerAgent extends BaseAgent {
 		register("Bakery-Customer", "Bakery");
 		getSellers();
 		
-		customer.retrieve("src/main/resources/config/small/clients.json");
-		total = customer.getOrder(agentName);
+		retrieve("src/main/resources/config/small/clients.json");
+		total = getOrder(agentName);
 		
 		addBehaviour(new RequestPerformer());
 	    try {
@@ -91,6 +98,10 @@ public class CustomerAgent extends BaseAgent {
 		private int step = 0;	
 				
 		public void action() {
+			//if (!baseAgent.getAllowAction()) {
+			//    return;
+			//}
+			
 			//System.out.println("Action Start");
 			switch (step) {
 			case 0:				
@@ -105,7 +116,8 @@ public class CustomerAgent extends BaseAgent {
 				LocalDate localDate = LocalDate.now();
 				
 				//Get Order at Specified Time
-		    	JSONObject order = customer.getCurrentOrder(localDate);
+		    	JSONObject order = getCurrentOrder(localDate);
+		    	order = includeLocation(order);
 		    			    	
 		    	//System.out.println("Send order: " + order);
 		    	
@@ -163,7 +175,7 @@ public class CustomerAgent extends BaseAgent {
 				break;
 			case 2:
 				try {
-					confirmation = customer.findTheCheapest(incomingProposal);
+					confirmation = findTheCheapest(incomingProposal);
 					
 					//System.out.println("Send Confirmation: " + confirmation);
 					
@@ -197,8 +209,11 @@ public class CustomerAgent extends BaseAgent {
 		public boolean done() {
 			if (n >= total) {
 				addBehaviour(new shutdown());
+				//baseAgent.finished(); // calling finished method
+                //myAgent.doDelete();
+                return true;
 			}
-			return (n >= total);
+			return false;
 		}
 		
 		// Taken from http://www.rickyvanrijn.nl/2017/08/29/how-to-shutdown-jade-agent-platform-programmatically/
@@ -219,5 +234,138 @@ public class CustomerAgent extends BaseAgent {
 				}
 			}
 		}
+	}
+	
+	//FUNCTIONS TO MANAGE JSON OBJECTS
+	//Retrieve client data from config file
+	private void retrieve(String fileName) {
+		File file = new File(fileName);
+		String filePath = file.getAbsolutePath();
+		String fileContent = "";	
+		
+		try {
+			fileContent = new String(Files.readAllBytes(Paths.get(filePath)), StandardCharsets.UTF_8);
+			dataArray = new JSONArray(fileContent);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	//Get list of order 
+	private int getOrder(String name) {
+		String customerName = "";
+				
+		//Take Orders from Customer (based on the name)
+		try {
+			for (int i = 0; i < dataArray.length(); i++) {
+				customerName = dataArray.getJSONObject(i).getString("name");
+				
+				if (customerName.equals(name)) {
+					orders = dataArray.getJSONObject(i).getJSONArray("orders");
+					//location = dataArray.getJSONObject(i).getJSONObject("location");
+					location = dataArray.getJSONObject(i).get("location");
+					
+					return orders.length();
+				}
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		return 0;
+	}
+	
+	private JSONObject findTheCheapest(JSONObject proposal) {
+		JSONObject confirmation = new JSONObject();
+		JSONObject product = new JSONObject();
+		
+		List<String> bakeryName = new ArrayList();
+		List<String> productTypes = new ArrayList();
+		
+		String chosenBakery = "";
+		
+		//Get All Bakery Name
+		try {
+			Iterator iter = proposal.keys();
+			while(iter.hasNext()) {
+				String key = (String)iter.next();
+				bakeryName.add(key);
+				
+				product = proposal.getJSONObject(key);
+				Iterator iter2 = product.keys();
+				while(iter2.hasNext()) {
+					String key2 = (String)iter2.next();
+					if (!productTypes.contains(key2)) {
+						productTypes.add(key2);
+					}
+				}
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		//Get The Cheapest Price
+		try {
+			for (String type : productTypes) {
+				Double min_price = Double.MAX_VALUE;
+				for (String name : bakeryName) {
+					product = proposal.getJSONObject(name);	
+					
+					if (min_price > product.getDouble(type) && product.getDouble(type) != 0) {
+						chosenBakery = name;
+						min_price = product.getDouble(type);
+					}
+				}
+				
+				if (confirmation.has(chosenBakery)) {
+					type = type + ", " + confirmation.getString(chosenBakery);
+				}
+				
+				confirmation.put(chosenBakery, type);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		return confirmation;
+	}
+	
+	//Function use LocalDate to check the current world date.
+	//It is currently commented for simulation.
+	//Later the date used will be provided by BaseAgent
+	private JSONObject getCurrentOrder(LocalDate date) {
+		JSONObject order_date = new JSONObject();
+		
+		//Check Date
+		try {
+			for (int i = 0; i < orders.length(); i++) {
+				order_date = orders.getJSONObject(i).getJSONObject("order_date");
+				
+				int day = order_date.getInt("hour");
+				int month = order_date.getInt("day");
+				
+				/*if ((day == date.getDayOfMonth()) && (month == date.getMonthValue()) ) {
+					return orders.getJSONObject(i);
+				}*/
+				
+				return orders.getJSONObject(i);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	private JSONObject includeLocation(JSONObject order) {
+		try {
+			order.put("location", location);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		return order;
 	}
 }
