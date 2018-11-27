@@ -1,8 +1,9 @@
-#CUSTOMER MESSAGES
+# CUSTOMER MESSAGES
+
 3 message exchange between CustomerAgent and OrderProcessingAgent
 
 
-##OUT MESSAGES
+## OUT MESSAGES
 - **performative**: REQUEST
 - **sender**: customer agent
 - **receiver**: order processing agent
@@ -18,7 +19,7 @@
 "Bread, Muffin, Donut"
 
 
-##IN MESSAGES
+## IN MESSAGES
 - **performative**: PROPOSE
 - **sender**: order processing agent
 - **receiver**: customer agent
