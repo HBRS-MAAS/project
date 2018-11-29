@@ -3,7 +3,7 @@ package org.maas;
 import java.util.List;
 import java.util.Vector;
 
-public class NewStart {
+public class Start {
     private static boolean isHost = true;
     private static String host = "localhost";
     private static String port = "8133";
