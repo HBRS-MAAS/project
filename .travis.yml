@@ -4,3 +4,6 @@ jdk:
 group: stable
 dist: trusty
 os: linux
+script:
+    - ./.gradlew run
+    - ./gradlew run --args="dummyTest"
