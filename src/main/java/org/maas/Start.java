@@ -50,7 +50,7 @@ public class Start {
             
         }
         if(orderProcessingStage) {
-			Initializer init = new orderProcessingInitializer();
+			Initializer init = new OrderProcessingInitializer();
             sb.append(init.initialize());
         }
         if(doughPrepStage) {
