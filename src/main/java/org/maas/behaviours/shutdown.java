@@ -1,4 +1,4 @@
-package org.team_pjt.behaviours;
+package org.maas.behaviours;
 
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
@@ -8,7 +8,7 @@ import jade.domain.FIPANames;
 import jade.domain.JADEAgentManagement.JADEManagementOntology;
 import jade.domain.JADEAgentManagement.ShutdownPlatform;
 import jade.lang.acl.ACLMessage;
-import org.team_pjt.agents.BaseAgent;
+import org.maas.agents.BaseAgent;
 
 public class shutdown extends OneShotBehaviour {
     public void action() {

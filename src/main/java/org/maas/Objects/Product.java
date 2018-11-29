@@ -1,4 +1,4 @@
-package org.team_pjt.objects;
+package org.maas.objects;
 
 import org.json.JSONObject;
 
