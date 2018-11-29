@@ -14,14 +14,32 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
+// for shutdown behaviour
+import jade.content.lang.Codec;
+import jade.content.lang.sl.SLCodec;
+import jade.content.onto.basic.Action;
+import jade.domain.JADEAgentManagement.JADEManagementOntology;
+import jade.domain.JADEAgentManagement.ShutdownPlatform;
+import jade.domain.FIPANames;
+
+import org.maas.utils.Time;
+
 @SuppressWarnings("serial")
 public class TimeKeeper extends Agent{
 	private int currentTimeStep;
+    private Time currentTime;
+    //TODO: read singleTimeStep from meta.json
+    private Time singleTimeStep = new Time(0,0,10);
 	private int countAgentsReplied;
+    private Time endTime;
+    private List<AID> finishedAgents;
 	
 	protected void setup() {
-		System.out.println("\tHello! time-teller-agent "+getAID().getLocalName()+" is ready.");
+		System.out.println("\tHello! time-keeper-agent "+getAID().getLocalName()+" is ready.");
 		
+        this.currentTime = new Time();
+        finishedAgents = new Vector<AID> ();
+
         /* Wait for all the agents to start
          */
         try {
@@ -30,19 +48,36 @@ public class TimeKeeper extends Agent{
             e.printStackTrace();
         }
 
+        Object[] args = getArguments();
+        if (args != null && args.length > 0) {
+            String firstArgument = (String) args[0];
+            // if end time is integer (then consider as number of time steps)
+            if (firstArgument.matches("\\d+")){
+                int totalTimeSteps = Integer.parseInt((String) args[0]);
+                this.endTime = new Time(totalTimeSteps, this.singleTimeStep);
+            }
+            // end time is given in TimeString format ("ddd.hh.mm")
+            else{
+                this.endTime = new Time((String) args[0]);
+            }
+        }else {
+            endTime = new Time(0,12,0);
+        }
+
 		addBehaviour(new SendTimeStep());
 		addBehaviour(new TimeStepConfirmationBehaviour());
 	}
 	
 	protected void takeDown() {
-        //TODO: call shutdown behaviour
+        System.out.println("\t" + this.getAID().getLocalName() + " terminating.");
 	}
 	
-    /* Get the AID for all alive agents
+    /* Get the AID for all alive agents who have registered with "JADE-bakery" name
      */
 	private List<DFAgentDescription> getAllAgents(){
 		DFAgentDescription template = new DFAgentDescription();
 		ServiceDescription sd = new ServiceDescription();
+        sd.setName("JADE-bakery");
 		template.addServices(sd);
 		try {
 			DFAgentDescription[] result = DFService.search(this, template);
@@ -59,13 +94,18 @@ public class TimeKeeper extends Agent{
 	private class SendTimeStep extends OneShotBehaviour {
 		public void action() {
             List<DFAgentDescription> agents = getAllAgents();
-            currentTimeStep++;
+            currentTime.add(singleTimeStep);
+            if (currentTime.greaterThan(endTime)) {
+                myAgent.addBehaviour(new shutdown());
+                return;
+            }
             countAgentsReplied = agents.size();
-            System.out.println(">>>>> " + currentTimeStep + " <<<<<");
+            finishedAgents.clear();
+            System.out.println(">>>>> " + currentTime + " <<<<<");
             for (DFAgentDescription agent : agents) {
                 ACLMessage timeMessage = new ACLMessage(55);
                 timeMessage.addReceiver(agent.getName());
-                timeMessage.setContent(Integer.toString(currentTimeStep));
+                timeMessage.setContent(currentTime.toString());
                 myAgent.send(timeMessage);
             } 
 		}
@@ -75,22 +115,17 @@ public class TimeKeeper extends Agent{
      * call SendTimeStep to increment time step
      */
 	private class TimeStepConfirmationBehaviour extends CyclicBehaviour {
-        private List<AID> agents;
-
-        public TimeStepConfirmationBehaviour(){
-            this.agents = new Vector<AID> ();
-        }
 		public void action() {
 			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
 			ACLMessage msg = myAgent.receive(mt);
 			if (msg != null) {
                 AID agent = msg.getSender();
-                if (!this.agents.contains(agent)){
-                    this.agents.add(agent);
+                if (!finishedAgents.contains(agent)){
+                    finishedAgents.add(agent);
                     countAgentsReplied--;
-                    if (countAgentsReplied <= 0){
+                    if (countAgentsReplied == 0){
                         myAgent.addBehaviour(new SendTimeStep());
-                        this.agents.clear();
+                        block();
                     }
                 }
 			}
@@ -99,4 +134,23 @@ public class TimeKeeper extends Agent{
 			}
 		}
 	}
+    
+    // Taken from http://www.rickyvanrijn.nl/2017/08/29/how-to-shutdown-jade-agent-platform-programmatically/
+    private class shutdown extends OneShotBehaviour{
+        public void action() {
+            System.out.println("Simulation ended. Shutting down platform.");
+            ACLMessage shutdownMessage = new ACLMessage(ACLMessage.REQUEST);
+            Codec codec = new SLCodec();
+            myAgent.getContentManager().registerLanguage(codec);
+            myAgent.getContentManager().registerOntology(JADEManagementOntology.getInstance());
+            shutdownMessage.addReceiver(myAgent.getAMS());
+            shutdownMessage.setLanguage(FIPANames.ContentLanguage.FIPA_SL);
+            shutdownMessage.setOntology(JADEManagementOntology.getInstance().getName());
+            try {
+                myAgent.getContentManager().fillContent(shutdownMessage,new Action(myAgent.getAID(), new ShutdownPlatform()));
+                myAgent.send(shutdownMessage);
+            }
+            catch (Exception e) {}
+        }
+    }
 }
