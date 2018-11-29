@@ -43,7 +43,7 @@ public class Start {
         }
         cmd.add("-agents");
 		if(isHost) {
-			sb.append("timekeeper:org.team_pjt.agents.TimeKeeper;");
+			sb.append("timekeeper:org.maas.agents.TimeKeeper;");
 		}
 
         if(customerStage) {
