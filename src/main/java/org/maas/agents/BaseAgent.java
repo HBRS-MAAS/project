@@ -28,6 +28,11 @@ public abstract class BaseAgent extends Agent {
     protected void setup() {
         this.addBehaviour(new PermitAction());
     }
+    
+    /**
+     * Template method - override this for the task in each time step. Don't forget to call {@link BaseAgent#finished()} at the end.
+     */
+    protected void  stepAction() {}
 
     /* This function registers the agent to yellow pages
      * Call this in `setup()` function
@@ -129,6 +134,8 @@ public abstract class BaseAgent extends Agent {
                 currentDay = day;
                 currentHour = hour;
                 allowAction = true;
+                
+                stepAction();
             }
             else {
                 block();
