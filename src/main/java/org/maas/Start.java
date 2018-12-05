@@ -4,19 +4,6 @@ import java.util.List;
 import java.util.Vector;
 
 public class Start {
-    private static boolean isHost = true;
-    private static String host = "localhost";
-    private static String port = "8133";
-    private static String localPort = "8133";
-
-    private static boolean customerStage = false;
-    private static boolean orderProcessingStage = false;
-    private static boolean doughPrepStage = false;
-    private static boolean bakingStage = false;
-    private static boolean packagingStage = false;
-    private static boolean deliveryStage = false;
-    private static boolean visualizationStage = false;
-
     public static void main(String[] args) {
         if(!decodeArguments(args)) {
             System.out.println("No arguments given. Using default arguments!");
@@ -25,6 +12,7 @@ public class Start {
         List<String> cmd = buildCMD();
         jade.Boot.main(cmd.toArray(new String[cmd.size()]));
     }
+
 
     public static List<String> buildCMD() {
         StringBuilder sb = new StringBuilder();
