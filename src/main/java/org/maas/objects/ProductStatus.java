@@ -4,9 +4,9 @@ public class ProductStatus {
     private String guid;
     private String status;
     private int amount;
-    private Product product;
+    private ProductMas product;
 
-    public ProductStatus(String guid, String status, int amount, Product product) {
+    public ProductStatus(String guid, String status, int amount, ProductMas product) {
         this.guid = guid;
         this.status = status;
         this.amount = amount;
@@ -33,7 +33,7 @@ public class ProductStatus {
         return amount;
     }
 
-    public Product getProduct() {
+    public ProductMas getProduct() {
         return product;
     }
 

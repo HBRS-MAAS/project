@@ -24,10 +24,10 @@ import org.maas.objects.DoughPrepTable;
 import org.maas.objects.Equipment;
 import org.maas.objects.KneadingMachine;
 import org.maas.objects.MetaInfo;
-import org.maas.objects.Order;
+import org.maas.objects.OrderMas;
 import org.maas.objects.Oven;
 import org.maas.objects.Packaging;
-import org.maas.objects.Product;
+import org.maas.objects.ProductMas;
 import org.maas.objects.Recipe;
 import org.maas.objects.Step;
 import org.maas.objects.StreetLink;
@@ -124,7 +124,7 @@ public class JSONConverter
             Point2D location = new Point2D.Double(x, y);
 
             // orders
-            Vector<Order> orders = new Vector<Order>();
+            Vector<OrderMas> orders = new Vector<OrderMas>();
             JsonArray jsonOrders = jsonClient.get("orders").getAsJsonArray();
             for (JsonElement order : jsonOrders)
             {
@@ -139,7 +139,7 @@ public class JSONConverter
         return clients;
     }
 
-    public static Order parseOrder(String jsonFile)
+    public static OrderMas parseOrder(String jsonFile)
     {
         JsonElement root = new JsonParser().parse(jsonFile);
         JsonObject jsonOrder = root.getAsJsonObject();
@@ -165,7 +165,7 @@ public class JSONConverter
             bakedGoods.add(new BakedGood(bakedGoodName, amount));
         }
 
-        Order anOrder = new Order(customerId, orderGuid, orderDay, orderHour, deliveryDay, deliveryHour, bakedGoods);
+        OrderMas anOrder = new OrderMas(customerId, orderGuid, orderDay, orderHour, deliveryDay, deliveryHour, bakedGoods);
         return anOrder;
     }
 

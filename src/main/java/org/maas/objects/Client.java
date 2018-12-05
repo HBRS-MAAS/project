@@ -8,11 +8,11 @@ public class Client {
     private int type;
     private String name;
     private Point2D location ;
-    private Vector<Order> orders;
+    private Vector<OrderMas> orders;
 
     public Client() {}
 
-    public Client(String guid, int type, String name, Point2D location, Vector<Order> orders) {
+    public Client(String guid, int type, String name, Point2D location, Vector<OrderMas> orders) {
         this.guid = guid;
         this.type = type;
         this.name = name;
@@ -52,11 +52,11 @@ public class Client {
         this.location = location;
     }
 
-    public Vector<Order> getOrders() {
+    public Vector<OrderMas> getOrders() {
         return orders;
     }
 
-    public void setOrders(Vector<Order> orders) {
+    public void setOrders(Vector<OrderMas> orders) {
         this.orders = orders;
     }
 

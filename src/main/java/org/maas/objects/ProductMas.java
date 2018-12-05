@@ -1,6 +1,6 @@
 package org.maas.objects;
 
-public class Product {
+public class ProductMas {
     private String guid;
     private Batch batch;
     private Recipe recipe;
@@ -8,7 +8,7 @@ public class Product {
     private Double salesPrice;
     private Double productionCost;
 
-    public Product(String guid, Batch batch, Recipe recipe, Packaging packaging, Double salesPrice,
+    public ProductMas(String guid, Batch batch, Recipe recipe, Packaging packaging, Double salesPrice,
             Double productionCost) {
         this.guid = guid;
         this.batch = batch;
@@ -68,7 +68,7 @@ public class Product {
 
     @Override
     public String toString() {
-        return "Product [guid=" + guid + ", batch=" + batch + ", recipe=" + recipe.toString()+ ", packaging=" + packaging
+        return "ProductMas [guid=" + guid + ", batch=" + batch + ", recipe=" + recipe.toString()+ ", packaging=" + packaging
                 + ", salesPrice=" + salesPrice + ", productionCost=" + productionCost + "]";
     }
 

@@ -2,7 +2,7 @@ package org.maas.objects;
 
 import java.util.Vector;
 
-public class Order {
+public class OrderMas {
 
     private String customerId;
     private String guid;
@@ -15,9 +15,9 @@ public class Order {
     private int deliveryHour;
     private Vector<BakedGood> bakedGoods;
 
-    public Order() {}
+    public OrderMas() {}
 
-    public Order(String customerId, String guid, int orderDay, int orderHour, int deliveryDate, int deliveryHour,
+    public OrderMas(String customerId, String guid, int orderDay, int orderHour, int deliveryDate, int deliveryHour,
             Vector<BakedGood> bakedGoods) {
         super();
         this.customerId = customerId;
@@ -87,7 +87,7 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Order [customerId=" + customerId + ", guid=" + guid + ", orderDay=" + orderDay + ", orderHour="
+        return "OrderMas [customerId=" + customerId + ", guid=" + guid + ", orderDay=" + orderDay + ", orderHour="
                 + orderHour + ", deliveryDate=" + deliveryDate + ", deliveryHour=" + deliveryHour + ", bakedGoods="
                 + bakedGoods + "]";
     }

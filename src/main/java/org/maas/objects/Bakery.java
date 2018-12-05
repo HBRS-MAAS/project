@@ -7,12 +7,12 @@ public class Bakery {
         private String guid;
         private String name;
         private Point2D location;
-        private Vector<Product> products;
+        private Vector<ProductMas> products;
         private Vector<Equipment> equipment;
 
         public Bakery() {}
 
-        public Bakery(String guid, String name, Point2D location, Vector<Product> products,
+        public Bakery(String guid, String name, Point2D location, Vector<ProductMas> products,
                 Vector<Equipment> equipment) {
             this.guid = guid;
             this.name = name;
@@ -45,11 +45,11 @@ public class Bakery {
             this.location = location;
         }
 
-        public Vector<Product> getProducts() {
+        public Vector<ProductMas> getProducts() {
             return products;
         }
 
-        public void setProducts(Vector<Product> products) {
+        public void setProducts(Vector<ProductMas> products) {
             this.products = products;
         }
 
@@ -61,10 +61,10 @@ public class Bakery {
             this.equipment = equipment;
         }
 
-        public Product findProduct(String productGuid) {
-            Product matchedProduct = null;
+        public ProductMas findProduct(String productGuid) {
+            ProductMas matchedProduct = null;
 
-            for(Product product : products) {
+            for(ProductMas product : products) {
                 if (product.getGuid().equals(productGuid)) {
                     matchedProduct = product;
                     break;
