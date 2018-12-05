@@ -62,7 +62,8 @@
 ```
 {
     "productType": String,
-    "guids": Vector<String>
+    "guids": Vector<String>,
+    "productQuantities": Vector <int>
 }
 ```
 
@@ -74,6 +75,7 @@
   "guids": [
     "order-001",
     "order-002"
-  ]
+  ],
+  "productQuantities":[10,20]
 }
 ```
