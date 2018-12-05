@@ -2,13 +2,12 @@ package org.maas;
 
 import java.util.List;
 import java.util.Vector;
-
 import org.maas.agents.DummyAgent;
 
 public class Start {
     public static void main(String[] args) {
     	List<String> agents = new Vector<>();
-    	agents.add("Proofer:org.maas.agents.Proofer");
+    	agents.add("test:org.maas.agents.DummyAgent");
 
     	List<String> cmd = new Vector<>();
     	cmd.add("-agents");
