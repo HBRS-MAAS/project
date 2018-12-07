@@ -16,6 +16,7 @@ public class Start {
     private static boolean packagingStage = false;
     private static boolean deliveryStage = false;
     private static boolean visualizationStage = false;
+    private static boolean noAgentStarting = true;
 
     public static void main(String[] args) {
         if(!decodeArguments(args)) {
@@ -44,6 +45,9 @@ public class Start {
         cmd.add("-agents");
 		if(isHost) {
 			sb.append("timekeeper:org.maas.agents.TimeKeeper;");
+			if(noAgentStarting) {
+			    sb.append("dummy:org.maas.agents.DummyAgent;");
+            }
 		}
 
         if(customerStage) {
@@ -92,24 +96,31 @@ public class Start {
             }
             if (args[i].equals("-customer")) {
                 customerStage = true;
+                noAgentStarting = false;
             }
             if (args[i].equals("-orderProcessing")) {
                 orderProcessingStage = true;
+                noAgentStarting = false;
             }
             if (args[i].equals("-doughPrep")) {
                 doughPrepStage = true;
+                noAgentStarting = false;
             }
             if (args[i].equals("-baking")) {
                 bakingStage = true;
+                noAgentStarting = false;
             }
             if (args[i].equals("-packaging")) {
                 packagingStage = true;
+                noAgentStarting = false;
             }
             if (args[i].equals("-delivery")) {
                 deliveryStage = true;
+                noAgentStarting = false;
             }
             if (args[i].equals("-visualization")) {
                 visualizationStage = true;
+                noAgentStarting = false;
             }
             if (args[i].equals("-h")) {
                 // TODO: implement help output
