@@ -16,6 +16,12 @@ import jade.lang.acl.MessageTemplate;
 
 @SuppressWarnings("serial")
 public class TimeKeeper extends Agent{
+	/*
+	 * Defines a performative value outside the range of values defined in ACLMessage (-1 to 19)
+	 * so that TimeStep messages do not interfere with other communications
+	 */
+	public static final int BROADCAST_TIMESTEP_PERFORMATIVE = 55;
+	
 	private int currentTimeStep;
 	private int countAgentsReplied;
 	
@@ -63,7 +69,7 @@ public class TimeKeeper extends Agent{
             countAgentsReplied = agents.size();
             System.out.println(">>>>> " + currentTimeStep + " <<<<<");
             for (DFAgentDescription agent : agents) {
-                ACLMessage timeMessage = new ACLMessage(55);
+                ACLMessage timeMessage = new ACLMessage(BROADCAST_TIMESTEP_PERFORMATIVE);
                 timeMessage.addReceiver(agent.getName());
                 timeMessage.setContent(Integer.toString(currentTimeStep));
                 myAgent.send(timeMessage);
