@@ -3,6 +3,11 @@ package org.maas.agents;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.File;
+import java.util.Scanner;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import jade.core.Agent;
 import jade.core.AID;
@@ -22,21 +27,22 @@ import jade.domain.JADEAgentManagement.JADEManagementOntology;
 import jade.domain.JADEAgentManagement.ShutdownPlatform;
 import jade.domain.FIPANames;
 
+import org.maas.objects.Meta;
 import org.maas.utils.Time;
+import org.maas.utils.JsonConverter;
 
 @SuppressWarnings("serial")
 public class TimeKeeper extends Agent{
 	private int currentTimeStep;
     private Time currentTime;
-    //TODO: read singleTimeStep from meta.json
-    private Time singleTimeStep = new Time(0,0,10);
+    private Time singleTimeStep;
 	private int countAgentsReplied;
     private Time endTime;
     private List<AID> finishedAgents;
 	
 	protected void setup() {
 		System.out.println("\tHello! time-keeper-agent "+getAID().getLocalName()+" is ready.");
-		
+
         this.currentTime = new Time();
         finishedAgents = new Vector<AID> ();
 
@@ -49,24 +55,40 @@ public class TimeKeeper extends Agent{
         }
 
         Object[] args = getArguments();
+        String scenarioDirectory;
         if (args != null && args.length > 0) {
-            String firstArgument = (String) args[0];
-            // if end time is integer (then consider as number of time steps)
-            if (firstArgument.matches("\\d+")){
-                int totalTimeSteps = Integer.parseInt((String) args[0]);
-                this.endTime = new Time(totalTimeSteps, this.singleTimeStep);
-            }
-            // end time is given in TimeString format ("ddd.hh.mm")
-            else{
-                this.endTime = new Time((String) args[0]);
-            }
-        }else {
+            scenarioDirectory = (String) args[0];
+            String endTimeString = (String) args[1];
+            endTime = new Time(endTimeString);
+        } else {
+            scenarioDirectory = "small";
             endTime = new Time(0,12,0);
         }
+        this.readSingleTimeStepFromMeta(scenarioDirectory);
 
 		addBehaviour(new SendTimeStep());
 		addBehaviour(new TimeStepConfirmationBehaviour());
 	}
+
+    /*
+     * read meta.json file and read the single time step 
+     */
+    private void readSingleTimeStepFromMeta(String scenarioDirectory){
+        String filePath = "config/" + scenarioDirectory + "/meta.json";
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(classLoader.getResource(filePath).getFile());
+        String fileString = "";
+        try (Scanner sc = new Scanner(file)) {
+            sc.useDelimiter("\\Z"); 
+            fileString = sc.next();
+            sc.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        TypeReference<?> type = new TypeReference<Meta>(){};
+        Meta m = JsonConverter.getInstance(fileString, type);
+        this.singleTimeStep = m.getTimeStep();
+    }
 	
 	protected void takeDown() {
         System.out.println("\t" + this.getAID().getLocalName() + " terminating.");

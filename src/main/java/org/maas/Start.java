@@ -2,6 +2,7 @@ package org.maas;
 
 import java.util.List;
 import java.util.Vector;
+import org.maas.utils.Time;
 
 public class Start {
     private static boolean isHost = true;
@@ -17,6 +18,8 @@ public class Start {
     private static boolean deliveryStage = false;
     private static boolean visualizationStage = false;
     private static boolean noAgentStarting = true;
+
+    private static Time endTime = new Time(0, 13, 0);
 
     public static void main(String[] args) {
         if(!decodeArguments(args)) {
@@ -44,7 +47,7 @@ public class Start {
         }
         cmd.add("-agents");
 		if(isHost) {
-			sb.append("timekeeper:org.maas.agents.TimeKeeper;");
+			sb.append("timekeeper:org.maas.agents.TimeKeeper(small, " + endTime.toString() + ");");
 			if(noAgentStarting) {
 			    sb.append("dummy:org.maas.agents.DummyAgent;");
             }

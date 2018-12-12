@@ -1,34 +1,59 @@
 package org.maas.agents;
 
-import jade.content.lang.Codec;
-import jade.content.lang.sl.SLCodec;
-import jade.content.onto.basic.Action;
-import jade.core.Agent;
+// import jade.core.Agent;
 import jade.core.behaviours.*;
+import jade.lang.acl.ACLMessage;
+
+// for shutdown behaviour
 import jade.domain.FIPANames;
 import jade.domain.JADEAgentManagement.JADEManagementOntology;
 import jade.domain.JADEAgentManagement.ShutdownPlatform;
-import jade.lang.acl.ACLMessage;
+import jade.content.lang.Codec;
+import jade.content.lang.sl.SLCodec;
+import jade.content.onto.basic.Action;
+
+import org.maas.agents.BaseAgent;
 
 
 @SuppressWarnings("serial")
-public class DummyAgent extends Agent {
+public class DummyAgent extends BaseAgent {
 	protected void setup() {
-	// Printout a welcome message
+        super.setup();
+        // Printout a welcome message
 		System.out.println("Hello! Dummy-agent "+getAID().getName()+" is ready.");
 
-        try {
- 			Thread.sleep(3000);
- 		} catch (InterruptedException e) {
- 			//e.printStackTrace();
- 		}
-		addBehaviour(new shutdown());
+        this.register("Dummy-Agent", "JADE-bakery");
+		addBehaviour(new DummyBehaviour());
 
 	}
 	protected void takeDown() {
+        this.deRegister();
 		System.out.println(getAID().getLocalName() + ": Terminating.");
 	}
 
+	/*
+     * Prints a line on stdout every time step 
+     */
+    private class DummyBehaviour extends Behaviour {
+        private boolean printed;
+        public DummyBehaviour(){
+            this.printed = false;
+        }
+        public void action() {
+            if (!baseAgent.getAllowAction()) {
+                return;
+            }
+            System.out.println("Inside DummyServer action");
+            this.printed = true;
+        }
+        public boolean done(){
+            if (!this.printed)
+                return false;
+            baseAgent.finished();
+            myAgent.addBehaviour(new DummyBehaviour());
+            return true;
+        }
+    }
     // Taken from http://www.rickyvanrijn.nl/2017/08/29/how-to-shutdown-jade-agent-platform-programmatically/
 	private class shutdown extends OneShotBehaviour{
 		public void action() {
