@@ -19,6 +19,7 @@ public class CoolingRackAgent extends BaseAgent{
     private AID LOADING_BAY_AGENT = new AID("dummy", AID.ISLOCALNAME);
     private AID intermediater = new AID("intermediater", AID.ISLOCALNAME);
     private List<ProcessedProduct> processedProducts;
+    private int cooledProductConvesationNumber = 0;
     
     protected void setup() {
         super.setup();
@@ -90,7 +91,8 @@ public class CoolingRackAgent extends BaseAgent{
             String messageContent = JsonConverter.getJsonString(p);
             ACLMessage loadingBayMessage = new ACLMessage(ACLMessage.INFORM);
             loadingBayMessage.addReceiver(LOADING_BAY_AGENT);
-            loadingBayMessage.setConversationId("baked-products-152");
+            cooledProductConvesationNumber ++;
+            loadingBayMessage.setConversationId("cooled-product-" + Integer.toString(cooledProductConvesationNumber));
             loadingBayMessage.setContent(messageContent);
             baseAgent.sendMessage(loadingBayMessage);
         }
