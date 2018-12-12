@@ -46,35 +46,28 @@ Following type of message is sent to an agent in packaging stage every time a pr
 -   **conversation-id**: `"baked-products-" + counter.toString()`
 -   **content**:
 ```
-{
-    [
-        {
-            productName: String("product_name"),
-            coolingRate: int(cooling_rate),
-            quantity: int(quantity),
-            coolingDuration: int(cooling_duration)
-        }
-    ]
-}
+[
+    {
+        guid: String("product_name"),
+        quantity: int(quantity),
+        coolingDuration: int(cooling_duration)
+    }
+]
 ```
 ### Example of content
 
 ```
-{
-    [
-        {
-            productName: "Donut",
-            coolingRate: 4,
-            quantity: 7,
-            coolingDuration: 1
-        },
-        {
-            productName: "Bread",
-            coolingRate: 3,
-            quantity: 11,
-            coolingDuration: 2
-        }
-    ]
-}
+[
+    {
+        guid: "Donut",
+        quantity: 7,
+        coolingDuration: 1
+    },
+    {
+        guid: "Bread",
+        quantity: 11,
+        coolingDuration: 2
+    }
+]
 ```
 
