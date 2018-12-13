@@ -15,7 +15,7 @@ import jade.lang.acl.MessageTemplate;
 
 @SuppressWarnings("serial")
 public class LoadingBayAgent extends BaseAgent {
-	private JSONArray orderDetailsArray = null;
+	private JSONArray orderDetailsArray = new JSONArray();
 	private String readyOrderID = null;
 
 	private HashMap<String, HashMap<String, Integer>> productDatabase = 
