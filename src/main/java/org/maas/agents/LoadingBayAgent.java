@@ -221,8 +221,9 @@ public class LoadingBayAgent extends BaseAgent {
 			template.addServices(sd);
 			try {
 				DFAgentDescription[] result = DFService.search(myAgent, template);
-				orderProcessor = result[0].getName();
-
+				if (result.length > 0) {
+					orderProcessor = result[0].getName();
+				}
 			} catch (FIPAException fe) {
 				System.out.println("[" + getAID().getLocalName() + "]: No OrderProcessor agent found.");
 				fe.printStackTrace();
