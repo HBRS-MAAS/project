@@ -14,8 +14,6 @@ public class DummyAgent extends BaseAgent {
 		System.out.println("Hello! Dummy-agent "+getAID().getName()+" is ready.");
 
         this.register("Dummy-Agent", "JADE-bakery");
-
-		addBehaviour(new DummyBehaviour());
 	}
 	protected void takeDown() {
         this.deRegister();
@@ -25,24 +23,8 @@ public class DummyAgent extends BaseAgent {
 	/*
      * Prints a line on stdout every time step 
      */
-    private class DummyBehaviour extends Behaviour {
-        private boolean printed;
-        public DummyBehaviour(){
-            this.printed = false;
-        }
-        public void action() {
-            if (!baseAgent.getAllowAction()) {
-                return;
-            }
-            System.out.println("Inside DummyServer action");
-            this.printed = true;
-        }
-        public boolean done(){
-            if (!this.printed)
-                return false;
-            baseAgent.finished();
-            myAgent.addBehaviour(new DummyBehaviour());
-            return true;
-        }
+    protected void stepAction(){
+        System.out.println("Printing inside DummyAgent");
+        baseAgent.finished();
     }
 }
