@@ -1,16 +1,7 @@
 package org.maas.agents;
 
-// import jade.core.Agent;
 import jade.core.behaviours.*;
 import jade.lang.acl.ACLMessage;
-
-// for shutdown behaviour
-import jade.domain.FIPANames;
-import jade.domain.JADEAgentManagement.JADEManagementOntology;
-import jade.domain.JADEAgentManagement.ShutdownPlatform;
-import jade.content.lang.Codec;
-import jade.content.lang.sl.SLCodec;
-import jade.content.onto.basic.Action;
 
 import org.maas.agents.BaseAgent;
 
@@ -23,8 +14,8 @@ public class DummyAgent extends BaseAgent {
 		System.out.println("Hello! Dummy-agent "+getAID().getName()+" is ready.");
 
         this.register("Dummy-Agent", "JADE-bakery");
-		addBehaviour(new DummyBehaviour());
 
+		addBehaviour(new DummyBehaviour());
 	}
 	protected void takeDown() {
         this.deRegister();
@@ -54,24 +45,4 @@ public class DummyAgent extends BaseAgent {
             return true;
         }
     }
-    // Taken from http://www.rickyvanrijn.nl/2017/08/29/how-to-shutdown-jade-agent-platform-programmatically/
-	private class shutdown extends OneShotBehaviour{
-		public void action() {
-			ACLMessage shutdownMessage = new ACLMessage(ACLMessage.REQUEST);
-			Codec codec = new SLCodec();
-			myAgent.getContentManager().registerLanguage(codec);
-			myAgent.getContentManager().registerOntology(JADEManagementOntology.getInstance());
-			shutdownMessage.addReceiver(myAgent.getAMS());
-			shutdownMessage.setLanguage(FIPANames.ContentLanguage.FIPA_SL);
-			shutdownMessage.setOntology(JADEManagementOntology.getInstance().getName());
-			try {
-			    myAgent.getContentManager().fillContent(shutdownMessage,new Action(myAgent.getAID(), new ShutdownPlatform()));
-			    myAgent.send(shutdownMessage);
-			}
-			catch (Exception e) {
-			    //LOGGER.error(e);
-			}
-
-		}
-	}
 }
