@@ -123,7 +123,7 @@ public abstract class BaseAgent extends Agent {
         private MessageTemplate mt;
 
         public void action(){
-            this.mt = MessageTemplate.and(MessageTemplate.MatchPerformative(55),
+            this.mt = MessageTemplate.and(MessageTemplate.MatchPerformative(TimeKeeper.BROADCAST_TIMESTEP_PERFORMATIVE),
                     MessageTemplate.MatchSender(baseAgent.clockAgent));
             ACLMessage msg = myAgent.receive(this.mt);
             if (msg != null) {
