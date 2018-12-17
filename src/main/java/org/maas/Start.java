@@ -2,6 +2,8 @@ package org.maas;
 
 import java.util.List;
 import java.util.Vector;
+import org.maas.OrderProcessingInitializer;
+import org.maas.BakingStageInitializer;
 
 public class Start {
     private static boolean isHost = true;
@@ -17,6 +19,9 @@ public class Start {
     private static boolean deliveryStage = false;
     private static boolean visualizationStage = false;
     private static boolean noAgentStarting = true;
+
+    private static String endTime = "000.03.00";
+    private static String scenarioDirectory = "small";
 
     public static void main(String[] args) {
         if(!decodeArguments(args)) {
@@ -43,12 +48,6 @@ public class Start {
             cmd.add(port);
         }
         cmd.add("-agents");
-		if(isHost) {
-			sb.append("timekeeper:org.maas.agents.TimeKeeper;");
-			if(noAgentStarting) {
-			    sb.append("dummy:org.maas.agents.DummyAgent;");
-            }
-		}
 
         if(customerStage) {
             
@@ -61,10 +60,14 @@ public class Start {
 
         }
         if(bakingStage) {
-
+			Initializer init = new BakingStageInitializer();
+            sb.append(init.initialize());
+            endTime = "000.06.00";
         }
         if(packagingStage) {
-
+			Initializer init = new PackagingStageInitializer();
+            sb.append(init.initialize());
+            endTime = "000.11.00";
         }
         if(deliveryStage) {
 
@@ -72,6 +75,12 @@ public class Start {
         if(visualizationStage) {
 
         }
+		if(isHost) {
+			sb.append("timekeeper:org.maas.agents.TimeKeeper(" + scenarioDirectory + ", " + endTime + ");");
+			if(noAgentStarting) {
+			    sb.append("dummy:org.maas.agents.DummyAgent;");
+            }
+		}
         cmd.add(sb.toString());
         return cmd;
     }

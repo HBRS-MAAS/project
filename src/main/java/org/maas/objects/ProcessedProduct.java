@@ -7,10 +7,10 @@ public class ProcessedProduct implements java.io.Serializable {
     private String guid;
     private int coolingDuration;
     private int quantity;
-    private int processStartTime;
+    private int remainingDurationTime;
 
     public ProcessedProduct(){
-        this.processStartTime = -1;
+        this.remainingDurationTime = -1;
     }
     
     public void setGuid(String id) {
@@ -37,12 +37,12 @@ public class ProcessedProduct implements java.io.Serializable {
         return quantity;
     }
 
-    public void setProcessStartTime(int processStartTime) {
-        this.processStartTime = processStartTime;
+    public void setRemainingTimeDuration(int remainingDurationTime) {
+        this.remainingDurationTime = remainingDurationTime;
     }
 
-    public int getProcessStartTime() {
-        return processStartTime;
+    public int getRemainingTimeDuration() {
+        return remainingDurationTime;
     }
 
 }
