@@ -14,7 +14,7 @@ The LoadingBayAgent receives order details from the order processor in a message
 
 The message content is a JSON string of the following format (proposed by the team handling the order processing phase): 
 
-```json
+```
 {
   "customerId" : String,
   "guid" : String,
@@ -36,7 +36,7 @@ The message content is a JSON string of the following format (proposed by the te
 
 ### Example message:
 
-```json
+```
 {
   "customerId" : customer-001,
   "guid" : order-003,
@@ -71,7 +71,7 @@ The LoadingBayAgent receives boxes of packaged products from a packaging agent i
 
 The message content is a JSON string of the following format: 
 
-```json
+```
 {
   "OrderID": String,
   "Boxes": [
@@ -91,7 +91,7 @@ The message content is a JSON string of the following format:
 
 ### Example message:
 
-```json
+```
 {
   "OrderID": "order-001",
   "Boxes": [
@@ -134,7 +134,7 @@ The LoadingBayAgent agent sends an order aggregator agent a message containing t
 
 The message content is a JSON string as described below: 
 
-```json
+```
 {
   "OrderID": String,
   "Boxes": [
@@ -154,7 +154,7 @@ The message content is a JSON string as described below:
 
 ### Example message:
 
-```json
+```
 {
   "OrderID": "order-001",
   "Boxes": [
