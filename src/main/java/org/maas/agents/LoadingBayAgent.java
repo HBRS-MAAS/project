@@ -137,9 +137,9 @@ public class LoadingBayAgent extends BaseAgent {
 		for (int i = 0; i < this.orderDetailsArray.length(); i++) {
 			JSONObject orderData = this.orderDetailsArray.getJSONObject(i);
 
-			if (orderID.equals(orderData.getString("OrderID"))) {
-				IDCheckString = orderData.getString("OrderID");
-				productsObject = orderData.getJSONObject("Products");
+			if (orderID.equals(orderData.getString("guid"))) {
+				IDCheckString = orderData.getString("guid");
+				productsObject = orderData.getJSONObject("products");
 				break;
 			}
 		}
@@ -209,7 +209,7 @@ public class LoadingBayAgent extends BaseAgent {
 
 	private class OrderDetailsReceiver extends CyclicBehaviour {
 		private String orderProcessorServiceType;
-		private AID orderProcessor = null;;
+		private AID orderProcessor = null;
 		private MessageTemplate mt;
 
 		protected void findOrderProcessor() {
