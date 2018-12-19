@@ -1,4 +1,4 @@
-package org.maas.objects;
+package org.maas.Objects;
 
 public class Oven extends Equipment {
     private int coolingRate;

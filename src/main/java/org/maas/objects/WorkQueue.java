@@ -1,4 +1,4 @@
-package org.maas.objects;
+package org.maas.Objects;
 
 import java.util.LinkedList;
 import java.util.Vector;
