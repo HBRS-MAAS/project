@@ -1,4 +1,4 @@
-package org.team_pjt.agents;
+package org.maas.agents;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
@@ -12,10 +12,10 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.team_pjt.behaviours.shutdown;
-import org.team_pjt.objects.Location;
-import org.team_pjt.objects.Order;
-import org.team_pjt.objects.Product;
+import org.org.maas.behaviours.shutdown;
+import org.org.maas.objects.Location;
+import org.org.maas.objects.Order;
+import org.org.maas.objects.Product;
 
 import java.util.*;
 // ToDo OrderProcessing in OrderProcessingAgent umbenennen
