@@ -1,4 +1,4 @@
-package org.maas.objects;
+package org.maas.Objects;
 
 import jade.core.AID;
 import org.json.JSONObject;
