@@ -13,9 +13,9 @@ import jade.lang.acl.MessageTemplate;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.org.maas.behaviours.shutdown;
-import org.org.maas.objects.Location;
-import org.org.maas.objects.Order;
-import org.org.maas.objects.Product;
+import org.org.maas.Objects.Location;
+import org.org.maas.Objects.Order;
+import org.org.maas.Objects.Product;
 
 import java.util.*;
 // ToDo OrderProcessing in OrderProcessingAgent umbenennen

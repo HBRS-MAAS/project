@@ -12,8 +12,8 @@ import jade.lang.acl.MessageTemplate;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.maas.behaviours.shutdown;
-import org.maas.objects.Order;
-import org.mass.objects.Product;
+import org.maas.Objects.Order;
+import org.mass.Objects.Product;
 
 import java.util.*;
 
