@@ -12,20 +12,21 @@ import jade.lang.acl.MessageTemplate;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.maas.behaviours.shutdown;
-import org.maas.objects.Location;
-import org.maas.objects.Order;
-import org.maas.objects.Product;
+import org.maas.Objects.Order;
+import org.maas.Objects.Product;
+
 import java.util.*;
 
 public class SchedulerAgent extends BaseAgent {
     private String sBakeryId;
-//    private Location lLocation;
+    //    private Location lLocation;
     private HashMap<String, Float> hmPrepTables;
     private HashMap<String, Float> hmKneadingMachine;
     private HashMap<String, Product> hmProducts; // = Available Products
     private HashMap<Integer, Order> scheduledOrders;
     private AID order_processing;
     private int endDays;
+    private boolean order_received = false;
 
     protected void setup(){
         super.setup();
@@ -37,8 +38,10 @@ public class SchedulerAgent extends BaseAgent {
         findOrderProcessing();
         scheduledOrders = new HashMap<>();
 
-        addBehaviour(new isNewOrderChecker());
+        addBehaviour(new isNewOrderCheckerNew());
+        addBehaviour(new TimeManager());
         addBehaviour(new QueueRequestServer());
+        addBehaviour(new ScheduledOrderRequestServer());
 
         System.out.println("SchedulerAgent is ready");
     }
@@ -60,26 +63,44 @@ public class SchedulerAgent extends BaseAgent {
         System.out.println("OrderProcessing found! - " + order_processing);
     }
 
-        private class isNewOrderChecker extends Behaviour {
-        boolean isDone = false;
+    private class TimeManager extends Behaviour {
+        private boolean isDone = false;
+
         @Override
         public void action() {
             if(!getAllowAction()) {
                 return;
             }
+            if(!order_received) {
+                finished();
+//                System.out.println(myAgent.getName() + " called finished");
+                isDone = true;
+                if (getCurrentDay() >= endDays) {
+                    deRegister();
+                    addBehaviour(new shutdown());
+                }
+            }
+        }
+
+        @Override
+        public boolean done() {
+            if(isDone) {
+                addBehaviour(new TimeManager());
+            }
+            return isDone;
+        }
+    }
+
+    private class isNewOrderCheckerNew extends Behaviour {
+        boolean isDone = false;
+        @Override
+        public void action() {
             MessageTemplate mtNewOrder = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM),
                     MessageTemplate.MatchSender(order_processing));
             ACLMessage newOrder = myAgent.receive(mtNewOrder);
             if(newOrder != null) {
-                if(newOrder.getContent().toUpperCase().equals("NO NEW ORDER")) {
-                    //System.out.println(myAgent.getName() + " called finished()");
-                    while(myAgent.receive() != null){}
-                    finished();
-                }
-                else {
-                    myAgent.addBehaviour(new receiveOrder());
-                }
-                myAgent.addBehaviour(new isNewOrderChecker());
+                myAgent.addBehaviour(new receiveOrderNew());
+                myAgent.addBehaviour(new isNewOrderCheckerNew());
                 isDone = true;
             }
             else {
@@ -93,14 +114,11 @@ public class SchedulerAgent extends BaseAgent {
         }
     }
 
-    private class receiveOrder extends Behaviour {
+    private class receiveOrderNew extends Behaviour {
         private boolean isDone = false;
         private int step = 0;
         @Override
         public void action() {
-            if(!getAllowAction()) {
-                return;
-            }
             if(getCurrentDay() >= endDays) {
                 addBehaviour(new shutdown());
             }
@@ -113,7 +131,6 @@ public class SchedulerAgent extends BaseAgent {
                         JSONObject jsoProducts = new JSONObject(sContent);
                         int delivery_day = jsoProducts.getJSONObject("deliveryDate").getInt("day");
                         ACLMessage schedule_reply = schedule_request.createReply();
-                        System.out.println(schedule_reply.getAllReceiver().next());
                         if (scheduledOrders.containsKey(delivery_day)) {
                             schedule_reply.setPerformative(ACLMessage.DISCONFIRM);
                             schedule_reply.setContent("Scheduling impossible!");
@@ -153,7 +170,7 @@ public class SchedulerAgent extends BaseAgent {
                             propagate_accepted_order.addReceiver(agent);
                         }
                         sendMessage(propagate_accepted_order);
-                        System.out.println("Propagated all scheduled Orders");
+                        System.out.println("Scheduler Agent Propagated all scheduled Orders");
                         step++;
                     }
                     else {
@@ -165,9 +182,6 @@ public class SchedulerAgent extends BaseAgent {
         @Override
         public boolean done() {
             isDone = step >= 2;
-            if(isDone) {
-                finished();
-            }
             return isDone;
         }
 
@@ -195,7 +209,6 @@ public class SchedulerAgent extends BaseAgent {
     }
 
     private class QueueRequestServer extends CyclicBehaviour {
-        // TODO
         @Override
         public void action() {
             MessageTemplate mtQueueRequest = MessageTemplate.and(MessageTemplate.MatchConversationId("queue request"),
@@ -222,6 +235,38 @@ public class SchedulerAgent extends BaseAgent {
                 }
                 else {
                     reply.setContent(Integer.toString(-1));
+                }
+                sendMessage(reply);
+            }
+            else {
+                block();
+            }
+        }
+    }
+
+    private class ScheduledOrderRequestServer extends CyclicBehaviour {
+        /*
+                Behaviour for getting orders for visualization
+         */
+        @Override
+        public void action() {
+            MessageTemplate allOrderRequestMT = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.REQUEST),
+                    MessageTemplate.MatchConversationId("allOrders"));
+            ACLMessage allOrderRequest = myAgent.receive(allOrderRequestMT);
+            if(allOrderRequest != null) {
+                ACLMessage reply = allOrderRequest.createReply();
+                if(scheduledOrders.isEmpty()) {
+                    reply.setContent("No scheduled Order");
+                }
+                else {
+                    JSONArray orders = new JSONArray();
+                    Iterator<Integer> keys = scheduledOrders.keySet().iterator();
+                    while(keys.hasNext()) {
+                        Integer key = keys.next();
+                        Order order = scheduledOrders.get(key);
+                        orders.put(new JSONObject(order.toJSONString()));
+                    }
+                    reply.setContent(orders.toString());
                 }
                 sendMessage(reply);
             }
