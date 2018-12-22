@@ -5,7 +5,7 @@ import org.maas.Initializer;
 
 public class PackagingStageInitializer extends Initializer {
     @Override
-    public String initialize() {
+    public String initialize(String scenarioDirectory) {
         Vector<String> agents = new Vector<>();
 
         agents.add("dummy:org.right_brothers.agents.PackagingStageTester");

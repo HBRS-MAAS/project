@@ -54,19 +54,19 @@ public class Start {
         }
         if(orderProcessingStage) {
 			Initializer init = new OrderProcessingInitializer();
-            sb.append(init.initialize());
+            sb.append(init.initialize(scenarioDirectory));
         }
         if(doughPrepStage) {
 
         }
         if(bakingStage) {
 			Initializer init = new BakingStageInitializer();
-            sb.append(init.initialize());
+            sb.append(init.initialize(scenarioDirectory));
             endTime = "000.06.00";
         }
         if(packagingStage) {
 			Initializer init = new PackagingStageInitializer();
-            sb.append(init.initialize());
+            sb.append(init.initialize(scenarioDirectory));
             endTime = "000.11.00";
         }
         if(deliveryStage) {
