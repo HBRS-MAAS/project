@@ -183,7 +183,12 @@ public class LoadingBayAgent extends BaseAgent {
 			template.addServices(sd);
 			try {
 				DFAgentDescription[] result = DFService.search(myAgent, template);
-				receivingAgent = result[0].getName();
+				if (result.length > 0) {
+                	receivingAgent = result[0].getName();
+                }
+				if (receivingAgent == null) {
+                	System.out.println("["+getAID().getLocalName()+"]: No OrderAggregator agent found.");
+                }
 
 			} catch (FIPAException fe) {
 				System.out.println("[" + getAID().getLocalName() + "]: No OrderAggregator agent found.");
@@ -194,16 +199,18 @@ public class LoadingBayAgent extends BaseAgent {
 		public void action() {
 			findReceiver();
 
-			ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-
-			msg.addReceiver(receivingAgent);
-			msg.setContent(createOrderBoxesJSONMessage(((LoadingBayAgent) baseAgent).readyOrderID));
-			msg.setConversationId("packaged-orders");
-			msg.setPostTimeStamp(System.currentTimeMillis());
-
-			myAgent.send(msg);
-
-			System.out.println("[" + getAID().getLocalName() + "]: Order details sent to OrderAggregator");
+			if (receivingAgent != null) {
+				ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+	
+				msg.addReceiver(receivingAgent);
+				msg.setContent(createOrderBoxesJSONMessage(((LoadingBayAgent) baseAgent).readyOrderID));
+				msg.setConversationId("packaged-orders");
+				msg.setPostTimeStamp(System.currentTimeMillis());
+	
+				myAgent.send(msg);
+	
+				System.out.println("[" + getAID().getLocalName() + "]: Order details sent to OrderAggregator");
+			}
 		}
 	}
 
