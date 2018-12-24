@@ -1,4 +1,4 @@
-package org.maas.objects;
+package org.maas.Objects;
 
 import java.awt.geom.Point2D;
 import java.util.Vector;

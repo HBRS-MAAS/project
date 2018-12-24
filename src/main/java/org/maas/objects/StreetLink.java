@@ -1,4 +1,4 @@
-package org.maas.objects;
+package org.maas.Objects;
 
 public class StreetLink {
     // TODO source and target should probably be StreetNode Objects...

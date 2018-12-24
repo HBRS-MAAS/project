@@ -1,4 +1,4 @@
-package org.maas.objects;
+package org.maas.Objects;
 
 
 // TODO this is just a shell for testing json

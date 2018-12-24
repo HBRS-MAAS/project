@@ -27,7 +27,7 @@ import jade.domain.JADEAgentManagement.JADEManagementOntology;
 import jade.domain.JADEAgentManagement.ShutdownPlatform;
 import jade.domain.FIPANames;
 
-import org.maas.objects.Meta;
+import org.maas.Objects.Meta;
 import org.maas.utils.Time;
 import org.maas.utils.JsonConverter;
 

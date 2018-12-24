@@ -7,7 +7,7 @@ import jade.lang.acl.MessageTemplate;
 import java.util.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.maas.agents.BaseAgent;
-import org.maas.objects.ProcessedProduct;
+import org.maas.Objects.ProcessedProduct;
 import org.maas.data.messages.ProductMessage;
 import org.maas.utils.JsonConverter;
 import org.maas.utils.Time;
