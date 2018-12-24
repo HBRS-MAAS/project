@@ -9,3 +9,4 @@ before_script:
 os: linux
 script:
   - gradle run
+  - gradle run --args="-orderProcessing"
