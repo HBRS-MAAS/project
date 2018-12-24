@@ -105,7 +105,7 @@ public class TimeKeeper extends Agent{
 	private List<DFAgentDescription> getAllAgents(){
 		DFAgentDescription template = new DFAgentDescription();
 		ServiceDescription sd = new ServiceDescription();
-        sd.setName("JADE-bakery");
+//         sd.setName("JADE-bakery");
 		template.addServices(sd);
 		try {
 			DFAgentDescription[] result = DFService.search(this, template);

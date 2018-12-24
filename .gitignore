@@ -34,3 +34,4 @@ hs_err_pid*
 # Exceptions
 !lib/commons-codec/commons-codec-1.3.jar
 !lib/jade.jar
+!gradle/wrapper/gradle-wrapper.jar
