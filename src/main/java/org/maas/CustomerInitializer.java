@@ -20,7 +20,6 @@ public class CustomerInitializer extends Initializer {
         List<String> agents = new Vector<>();
     	for (String id : customerID) {
     		agents.add(id + ":org.maas.agents.CustomerAgent");
-            break;
     	}
         String agentInitString = String.join(";", agents);
         agentInitString += ";";
