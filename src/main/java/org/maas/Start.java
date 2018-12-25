@@ -50,7 +50,8 @@ public class Start {
         cmd.add("-agents");
 
         if(customerStage) {
-            
+			Initializer init = new CustomerInitializer();
+            sb.append(init.initialize(scenarioDirectory));
         }
         if(orderProcessingStage) {
 			Initializer init = new OrderProcessingInitializer();
