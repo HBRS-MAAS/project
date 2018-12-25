@@ -1,65 +1,60 @@
 package org.maas.Objects;
 
-import java.util.Vector;
+import java.util.Hashtable;
 
-public class MetaInfo {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import org.maas.utils.Time;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Meta {
     private int bakeries;
-    private Vector<Client> customers; //TODO this will need to change (only in place to match the json file)
+    private Hashtable<String, Integer> customers;
     private int durationInDays;
     private int products;
     private int orders;
+    private Time timeStep;
 
-    public MetaInfo(int bakeries, Vector<Client> customers, int durationInDays, int products, int orders) {
-        this.bakeries = bakeries;
-        this.customers = customers;
-        this.durationInDays = durationInDays;
-        this.products = products;
-        this.orders = orders;
+    public Meta() {
+        this.customers = new Hashtable<>();
+        this.timeStep = new Time();
     }
 
     public int getBakeries() {
         return bakeries;
     }
-
     public void setBakeries(int bakeries) {
         this.bakeries = bakeries;
     }
-
-    public Vector<Client> getCustomers() {
+    public Hashtable<String, Integer> getCustomers() {
         return customers;
     }
-
-    public void setCustomers(Vector<Client> customers) {
+    public void setCustomers(Hashtable<String, Integer> customers) {
         this.customers = customers;
     }
-
     public int getDurationInDays() {
         return durationInDays;
     }
-
     public void setDurationInDays(int durationInDays) {
         this.durationInDays = durationInDays;
     }
-
     public int getProducts() {
         return products;
     }
-
     public void setProducts(int products) {
         this.products = products;
     }
-
     public int getOrders() {
         return orders;
     }
-
     public void setOrders(int orders) {
         this.orders = orders;
     }
+    public void setTimeStep(Time timeStep) {
+        this.timeStep = timeStep;
+    }
 
-    @Override
-    public String toString() {
-        return "MetaInfo [bakeries=" + bakeries + ", customers=" + customers + ", durationInDays=" + durationInDays
-                + ", products=" + products + ", orders=" + orders + "]";
+    public Time getTimeStep() {
+        return timeStep;
     }
 }
