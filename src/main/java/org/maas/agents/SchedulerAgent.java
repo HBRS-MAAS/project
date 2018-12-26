@@ -13,7 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.maas.behaviours.shutdown;
 import org.maas.Objects.Order;
-import org.mass.Objects.Product;
+import org.maas.Objects.Product;
 
 import java.util.*;
 

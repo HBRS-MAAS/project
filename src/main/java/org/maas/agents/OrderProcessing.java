@@ -2,7 +2,6 @@ package org.maas.agents;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -12,10 +11,10 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.org.maas.behaviours.shutdown;
-import org.org.maas.Objects.Location;
-import org.org.maas.Objects.Order;
-import org.org.maas.Objects.Product;
+import org.maas.behaviours.shutdown;
+import org.maas.Objects.Location;
+import org.maas.Objects.Order;
+import org.maas.Objects.Product;
 
 import java.util.*;
 // ToDo OrderProcessing in OrderProcessingAgent umbenennen
