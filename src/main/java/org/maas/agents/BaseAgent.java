@@ -24,7 +24,7 @@ public abstract class BaseAgent extends Agent {
     private Time currentTime;
     private boolean allowAction = false;
     protected AID clockAgent = new AID("TimeKeeper", AID.ISLOCALNAME);
-    protected AID boardVisualisationAgent = new AID("board-visualisation", AID.ISLOCALNAME);
+    protected AID visualisationAgent = new AID("visualisation", AID.ISLOCALNAME);
     protected BaseAgent baseAgent = this;
 	
     /* 
@@ -136,7 +136,7 @@ public abstract class BaseAgent extends Agent {
     		for(String pattern : visualizedMessages) {
     			if(conversationId.matches(pattern)) {
 	    	    	msg.clearAllReceiver();
-	    	    	msg.addReceiver(boardVisualisationAgent);
+	    	    	msg.addReceiver(visualisationAgent);
 	    	    	this.send(msg);
 	    	    	
 	    	    	break;
