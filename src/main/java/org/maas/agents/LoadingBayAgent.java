@@ -207,7 +207,7 @@ public class LoadingBayAgent extends BaseAgent {
 				msg.setConversationId("packaged-orders");
 				msg.setPostTimeStamp(System.currentTimeMillis());
 	
-				myAgent.send(msg);
+				baseAgent.sendMessage(msg);
 	
 				System.out.println("[" + getAID().getLocalName() + "]: Order details sent to OrderAggregator");
 			}

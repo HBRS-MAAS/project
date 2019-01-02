@@ -1,5 +1,8 @@
 package org.maas.agents;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.maas.utils.Time;
 
 import jade.core.Agent;
@@ -21,7 +24,7 @@ public abstract class BaseAgent extends Agent {
     private Time currentTime;
     private boolean allowAction = false;
     protected AID clockAgent = new AID("TimeKeeper", AID.ISLOCALNAME);
-    //protected AID visualisationAgent = new AID("visualisation", AID.ISLOCALNAME);
+    protected AID visualisationAgent = new AID("visualisation", AID.ISLOCALNAME);
     protected BaseAgent baseAgent = this;
 	
     /* 
@@ -124,11 +127,22 @@ public abstract class BaseAgent extends Agent {
     protected void visualiseMessageQueuesByAgent(ACLMessage msg) {
     }
     protected void visualiseOrderBoard(ACLMessage msg) {
-       /*
-       msg.clearAllReceiver();
-       msg.addReceiver(visualisationAgent);
-       this.send(msg);
-       */
+    	List<String> visualizedMessages = Arrays
+    			.asList("^baking-request$", "^[\\w\\-]+\\-cooled\\-product\\-\\d+$", "^packaged-orders$");
+    	
+    	if(msg != null && msg.getConversationId() != null) {
+    		String conversationId = msg.getConversationId().toLowerCase();
+    		
+    		for(String pattern : visualizedMessages) {
+    			if(conversationId.matches(pattern)) {
+	    	    	msg.clearAllReceiver();
+	    	    	msg.addReceiver(visualisationAgent);
+	    	    	this.send(msg);
+	    	    	
+	    	    	break;
+    			}
+    		}
+    	}
     }
     protected void visualiseStreetNetwork(ACLMessage msg) {
     }
