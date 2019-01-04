@@ -2,6 +2,8 @@ package org.maas.agents;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.maas.utils.Time;
 
@@ -137,6 +139,19 @@ public abstract class BaseAgent extends Agent {
     			if(conversationId.matches(pattern)) {
 	    	    	msg.clearAllReceiver();
 	    	    	msg.addReceiver(visualisationAgent);
+	    	    	
+	    	    	// Add bakery id with conversation for baking request and packaged orders
+	    	    	if(!pattern.equals(visualizedMessages.get(1))) {
+	    	    		Matcher bakeryMatcher = Pattern.compile("^(\\w+)\\-(\\d+)\\-")
+	    	    				.matcher(msg.getSender().getLocalName());
+	    	    		
+	    	    		if(bakeryMatcher.lookingAt()) {
+	    	        		msg.setConversationId(
+	    	        				bakeryMatcher.group(1)+ "-" + bakeryMatcher.group(2) + "-" + msg.getConversationId()
+    	        				);
+	    	    		}
+	    	    	}
+	    	    	
 	    	    	this.send(msg);
 	    	    	
 	    	    	break;
