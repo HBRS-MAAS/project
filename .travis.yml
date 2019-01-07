@@ -8,4 +8,6 @@ before_script:
 - sh -e /etc/init.d/xvfb start
 os: linux
 script:
-  - gradle run
+  - ./gradlew run
+  - ./gradlew run --args="-orderProcessing"
+  - ./gradlew run --args="-customer"
