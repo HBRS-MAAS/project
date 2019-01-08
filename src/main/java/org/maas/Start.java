@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Vector;
 import org.maas.OrderProcessingInitializer;
 import org.maas.BakingStageInitializer;
+import org.maas.DoughPrepStageInitializer;
 
 public class Start {
     private static boolean isHost = true;
@@ -35,7 +36,7 @@ public class Start {
     public static List<String> buildCMD() {
         StringBuilder sb = new StringBuilder();
         List<String> cmd = new Vector<>();
-        
+
         cmd.add("-jade_domain_df_maxresult");
         cmd.add("10000");
 
@@ -61,7 +62,8 @@ public class Start {
             sb.append(init.initialize(scenarioDirectory));
         }
         if(doughPrepStage) {
-
+            Initializer init = new DoughPrepStageInitializer();
+            sb.append(init.initialize(scenarioDirectory));
         }
         if(bakingStage) {
 			Initializer init = new BakingStageInitializer();
