@@ -11,13 +11,13 @@ import java.util.Iterator;
 public class OrderProcessingInitializer extends Initializer {
     private static String bakeries_path;
     private static String meta_path;
-    private static final String sOPPrefix = ":org.team_pjt.agents.OrderProcessing";
-    private static final String sSchPrefix2 = ":org.team_pjt.agents.SchedulerAgent";
+    private static final String sOPPrefix = ":org.maas.agents.OrderProcessing";
+    private static final String sSchPrefix2 = ":org.maas.agents.SchedulerAgent";
 
     @Override
     public String initialize(String scenarioDirectory) {
         StringBuilder agentSB = new StringBuilder();
-        String opiconfigPath = Initializer.configPath;
+        String opiconfigPath = "src/main/resources/config/";
         opiconfigPath += scenarioDirectory + "/";
         bakeries_path = opiconfigPath + "bakeries.json";
         meta_path = opiconfigPath + "meta.json";
