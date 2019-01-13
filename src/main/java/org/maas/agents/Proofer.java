@@ -25,8 +25,13 @@ import jade.domain.JADEAgentManagement.ShutdownPlatform;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
+// This agent receives a ProofingRequest, executes it ands sends a DoughNotification to the interface agent of the Baking Stage.
+
 public class Proofer extends BaseAgent {
     private AID [] bakingInterfaceAgents;
+    private AID doughManager;
+    private String bakeryId;
+    private String doughManagerAgentName;
 
     private Vector<String> guids;
     private String productType;
@@ -35,51 +40,32 @@ public class Proofer extends BaseAgent {
     protected void setup() {
         super.setup();
 
+        Object[] args = getArguments();
+
+        if(args != null && args.length > 0){
+            this.bakeryId = (String) args[0];
+        }
+
+        // Name of the doughManager the Proofer communicates with
+        doughManagerAgentName = "DoughManagerAgent_" + bakeryId;
+        AID doughManager = new AID(doughManagerAgentName, AID.ISLOCALNAME);
+        System.out.println(doughManager.getName());
+
+        this.register("Proofer_" + bakeryId, "JADE-bakery");
+
         System.out.println(getAID().getLocalName() + " is ready.");
 
-        this.register("Proofer", "JADE-bakery");
-
         // Get Agents AIDS
-        this.getDoughManagerAIDs();
         this.getBakingInterfaceAIDs();
 
         addBehaviour(new ReceiveProofingRequests());
 
-        // This agent receives a ProofingRequest, executes it ands sends a DoughNotification to the interface agent of the Baking Stage.
-
-
-        // For now we terminate the agent here because the other agents are not part of this repository.
-        // Remove this if you wish to use this agent in your architecture.
-        baseAgent.doDelete();
 
     }
 
     protected void takeDown() {
         System.out.println(getAID().getLocalName() + ": Terminating.");
         baseAgent.deRegister();
-    }
-
-    public void getDoughManagerAIDs() {
-        AID [] doughManagerAgents;
-        DFAgentDescription template = new DFAgentDescription();
-        ServiceDescription sd = new ServiceDescription();
-
-        sd.setType("Dough-manager");
-        template.addServices(sd);
-        try {
-            DFAgentDescription [] result = DFService.search(this, template);
-            System.out.println(getAID().getLocalName() + "Found the following Dough-manager agents:");
-            doughManagerAgents = new AID [result.length];
-
-            for (int i = 0; i < result.length; ++i) {
-                doughManagerAgents[i] = result[i].getName();
-                System.out.println(doughManagerAgents[i].getName());
-            }
-
-        }
-        catch (FIPAException fe) {
-            fe.printStackTrace();
-        }
     }
 
 
@@ -192,7 +178,7 @@ public class Proofer extends BaseAgent {
 
                     msg.setContent(doughNotificationString);
 
-                    msg.setConversationId("dough-notification");
+                    msg.setConversationId("dough-Notification");
 
                     // Send doughNotification msg to bakingInterfaceAgents
                     for (int i=0; i<bakingInterfaceAgents.length; i++){
