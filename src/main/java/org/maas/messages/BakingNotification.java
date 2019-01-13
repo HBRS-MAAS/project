@@ -2,10 +2,10 @@ package org.maas.messages;
 
 import java.util.Vector;
 
-public class DoughNotification extends GenericGuidMessage {
+public class BakingNotification extends GenericGuidMessage {
     private Vector<Integer> productQuantities;
 
-    public DoughNotification(Vector<String> guids, String productType, Vector<Integer> productQuantities) {
+    public BakingNotification(Vector<String> guids, String productType, Vector<Integer> productQuantities) {
         super(guids, productType);
         this.productQuantities = productQuantities;
     }
@@ -14,12 +14,12 @@ public class DoughNotification extends GenericGuidMessage {
         return productQuantities;
     }
 
-    public void setProductQuantities(Vector<Integer> productQuantities) {
+    public void setQuantities(Vector<Integer> productQuantities) {
         this.productQuantities = productQuantities;
     }
 
     @Override
     public String toString() {
-        return "DoughNotification [productQuantities=" + productQuantities + "]";
+        return "BakingNotification [quantities=" + productQuantities + "]";
     }
 }
