@@ -35,7 +35,7 @@ public class OrderProcessing extends BaseAgent {
         if (!readArgs(oArguments)) {
             System.out.println(getName() + ": No parameter given for OrderProcessing " + getName());
         }
-        logger = new Logger(getName(), "release");
+        logger = new Logger(getName(), "no");
         this.register("OrderProcessing", this.sBakeryId);
         findScheduler();
         order_received = false;
@@ -207,8 +207,7 @@ public class OrderProcessing extends BaseAgent {
         }
 
         private void distributeScheduledOrder(String orderID) {
-//            System.out.println(myAgent.getName() + ": waiting for accepted proposal: " + orderID);
-            logger.log(new Logger.LogMessage("waiting for accepted proposal: " + orderID, "release"));
+//            logger.log(new Logger.LogMessage("waiting for accepted proposal: " + orderID, "release"));
             MessageTemplate acceptedProposalMT = MessageTemplate.or(MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL),
                     MessageTemplate.MatchPerformative(ACLMessage.REJECT_PROPOSAL));
             ACLMessage accepted_proposal = receive(acceptedProposalMT);
