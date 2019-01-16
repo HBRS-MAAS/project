@@ -15,6 +15,7 @@ import jade.core.behaviours.*;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -105,10 +106,12 @@ public class TimeKeeper extends Agent{
 	private List<DFAgentDescription> getAllAgents(){
 		DFAgentDescription template = new DFAgentDescription();
 		ServiceDescription sd = new ServiceDescription();
+		SearchConstraints getAll = new SearchConstraints();
+		getAll.setMaxResults(new Long(-1));
 //         sd.setName("JADE-bakery");
 		template.addServices(sd);
 		try {
-			DFAgentDescription[] result = DFService.search(this, template);
+			DFAgentDescription[] result = DFService.search(this, template, getAll);
 			return Arrays.asList(result);
 		}
 		catch (FIPAException fe) {

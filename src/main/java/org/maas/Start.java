@@ -20,6 +20,7 @@ public class Start {
     private static boolean deliveryStage = false;
     private static boolean visualizationStage = false;
     private static boolean noAgentStarting = true;
+    private static boolean runTimeKeeper = true;
 
     private static String endTime = "001.03.00";
     private static String scenarioDirectory = "small";
@@ -67,35 +68,28 @@ public class Start {
             Initializer init = new DoughPrepStageInitializer();
             sb.append(init.initialize(scenarioDirectory));
         }
-        if(bakingStage && packagingStage) {
-            Initializer init = new BakingAndPackagingStageInitializer();
+        if(bakingStage) {
+            Initializer init = new BakingStageInitializer();
             sb.append(init.initialize(scenarioDirectory));
             endTime = "004.12.00";
-
-        } else {
-            if(bakingStage) {
-    			Initializer init = new BakingStageInitializer();
-                sb.append(init.initialize(scenarioDirectory));
-                endTime = "004.12.00";
-            }
-            if(packagingStage) {
-                Initializer init = new PackagingStageInitializer();
-                sb.append(init.initialize(scenarioDirectory));
-                endTime = "002.01.00";
-            }
+        }
+        if(packagingStage) {
+            Initializer init = new PackagingStageInitializer();
+            sb.append(init.initialize(scenarioDirectory));
+            endTime = "002.01.00";
         }
         if(deliveryStage) {
 
         }
         if(visualizationStage) {
-            Initializer init = new VisualisationInitializer(endTime);
+            Initializer init = new VisualisationInitializer();
             sb.append(init.initialize(scenarioDirectory));
         }
-        if(isHost) {
+        if(runTimeKeeper) {
             sb.append("timekeeper:org.maas.agents.TimeKeeper(" + scenarioDirectory + ", " + endTime + ");");
-            if(noAgentStarting) {
-                sb.append("dummy:org.maas.agents.DummyAgent;");
-            }
+        }
+        if(noAgentStarting) {
+            sb.append("dummy:org.maas.agents.DummyAgent;");
         }
         cmd.add(sb.toString());
         return cmd;
@@ -153,6 +147,10 @@ public class Start {
                 // TODO: implement help output
                 System.out.println();
             }
+            if (args[i].equals("-noTK")) { // no TimeKeeper
+                runTimeKeeper = false;
+            }
+
         }
         if (!isHost && (port == null || host == null)) {
             System.out.println("instance is not host and host and port have to be specified!");

@@ -8,11 +8,11 @@ public class Batch {
         this.breadsPerOven = breadsPerOven;
     }
 
-    private int getBreadsPerOven() {
+    public int getBreadsPerOven() {
         return breadsPerOven;
     }
 
-    private void setBreadsPerOven(int breadsPerOven) {
+    public void setBreadsPerOven(int breadsPerOven) {
         this.breadsPerOven = breadsPerOven;
     }
 
