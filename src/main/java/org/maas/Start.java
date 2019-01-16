@@ -82,6 +82,9 @@ public class Start {
         if(visualizationStage) {
             Initializer init = new VisualizationInitializer();
             sb.append(init.initialize(scenarioDirectory));
+            
+            Initializer boardInit = new BoardVisualisationInitializer(endTime);
+            sb.append(boardInit.initialize(scenarioDirectory));
         }
         if(isHost) {
             sb.append("timekeeper:org.maas.agents.TimeKeeper(" + scenarioDirectory + ", " + endTime + ");");
