@@ -74,6 +74,10 @@ public class Start {
         if(packagingStage) {
             Initializer init = new PackagingStageInitializer();
             sb.append(init.initialize(scenarioDirectory));
+            
+            Initializer boardInit = new BoardVisualisationInitializer(endTime);
+            sb.append(boardInit.initialize(scenarioDirectory));
+            
             endTime = "002.01.00";
         }
         if(deliveryStage) {

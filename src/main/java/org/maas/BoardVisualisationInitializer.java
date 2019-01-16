@@ -3,10 +3,10 @@ package org.maas;
 import java.util.Vector;
 import org.maas.Initializer;
 
-public class VisualisationInitializer extends Initializer {
+public class BoardVisualisationInitializer extends Initializer {
 	private String endTime;
 	
-	public VisualisationInitializer(String endTime) {
+	public BoardVisualisationInitializer(String endTime) {
 		this.endTime = endTime;
 	}
 	
