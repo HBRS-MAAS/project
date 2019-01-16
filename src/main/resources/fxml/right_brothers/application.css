@@ -1,0 +1,58 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+.stage-root {
+	-fx-background-color: #e6e6e6; 
+	-fx-border-radius: 10; 
+	-fx-background-radius: 10; 
+	-fx-padding: 10 0;
+}
+
+.stage-message-count {
+	-fx-padding: 0 0 0 10;
+}
+
+.stage-label {
+	-fx-padding: 0 0 0 10;
+}
+
+.card-container-anchor {
+	-fx-padding: 10 0;
+	-fx-background-color: transparent;
+}
+
+.card-container {
+	-fx-background-color: #e6e6e6;
+}
+
+.baking-card {
+	-fx-background-color: #e6e6e6;
+	-fx-border-radius: 5;
+	-fx-background-radius: 5;
+	-fx-effect: dropshadow(three-pass-box,  #585858, 5, 0, 0, 0);
+	-fx-background-insets: 5;
+	-fx-padding: 10;
+}
+
+.packaging-card{
+	-fx-background-color: #f2f2f2;
+	-fx-border-radius: 5;
+	-fx-background-radius: 5;
+	-fx-effect: dropshadow(three-pass-box,  #585858, 5, 0, 0, 0);
+	-fx-background-insets: 5;
+	-fx-padding: 10;
+}
+
+.delivery-card{
+	-fx-background-color: #ffffff;
+	-fx-border-radius: 5;
+	-fx-background-radius: 5;
+	-fx-effect: dropshadow(three-pass-box,  #585858, 5, 0, 0, 0);
+	-fx-background-insets: 5;
+	-fx-padding: 10;
+}
+
+.menu {
+	-fx-background-color: #cccccc;
+	-fx-border-radius: 5;
+	-fx-background-radius: 5;
+	-fx-border-color: black;
+}

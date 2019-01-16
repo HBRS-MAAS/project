@@ -4,7 +4,7 @@ import java.util.Vector;
 
 public class ProofingRequest extends GenericGuidMessage {
     private float proofingTime;
-    Vector<Integer> productQuantities;
+    private Vector<Integer> productQuantities;
 
     public ProofingRequest(String productType, Vector<String> guids, float proofingTime, Vector<Integer> productQuantities) {
         super(guids, productType);

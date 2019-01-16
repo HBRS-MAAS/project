@@ -8,16 +8,18 @@ public class Bakery {
         private String name;
         private Point2D location;
         private Vector<ProductMas> products;
+        private Vector<String> availableProducts;
         private Vector<Equipment> equipment;
 
         public Bakery() {}
 
         public Bakery(String guid, String name, Point2D location, Vector<ProductMas> products,
-                Vector<Equipment> equipment) {
+                Vector<String> availableProducts, Vector<Equipment> equipment) {
             this.guid = guid;
             this.name = name;
             this.location = location;
             this.products = products;
+            this.availableProducts = availableProducts;
             this.equipment = equipment;
         }
 
@@ -53,6 +55,14 @@ public class Bakery {
             this.products = products;
         }
 
+        public Vector<String> getAvailableProducts() {
+            return availableProducts;
+        }
+
+        public void setAvailableProducts(Vector<String> availableProducts) {
+            this.availableProducts = availableProducts;
+        }
+
         public Vector<Equipment> getEquipment() {
             return equipment;
         }
@@ -77,6 +87,6 @@ public class Bakery {
         @Override
         public String toString() {
             return "Bakery [guid=" + guid + ", name=" + name + ", location=" + location + ", products=" + products
-                    + ", equipment=" + equipment + "]";
+                    + ", availableProducts=" + availableProducts + ", equipment=" + equipment + "]";
         }
 }
