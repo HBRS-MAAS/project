@@ -16,7 +16,6 @@ import jade.lang.acl.MessageTemplate;
 @SuppressWarnings("serial")
 public class LoadingBayAgent extends BaseAgent {
 	private JSONArray orderDetailsArray = new JSONArray();
-	private String readyOrderID = null;
 	private String bakeryGuid = "bakery-001";
 
 	private HashMap<String, HashMap<String, Integer>> productDatabase = new HashMap<>();
@@ -183,6 +182,11 @@ public class LoadingBayAgent extends BaseAgent {
 
 	private class PackagingPhaseMessageSender extends OneShotBehaviour {
 		private AID receivingAgent = null;
+		String orderID = null;
+		
+		public PackagingPhaseMessageSender(String id) {
+			this.orderID = id;
+		}
 
 		protected void findReceiver() {
 			DFAgentDescription template = new DFAgentDescription();
@@ -212,7 +216,7 @@ public class LoadingBayAgent extends BaseAgent {
 				ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 	
 				msg.addReceiver(receivingAgent);
-				msg.setContent(createOrderBoxesJSONMessage(((LoadingBayAgent) baseAgent).readyOrderID));
+				msg.setContent(createOrderBoxesJSONMessage(this.orderID));
 				msg.setConversationId("packaged-orders");
 				msg.setPostTimeStamp(System.currentTimeMillis());
 	
@@ -289,8 +293,7 @@ public class LoadingBayAgent extends BaseAgent {
 				updateProductDatabase(boxesMessageContent);
 
 				if (orderProductsReady(orderID)) {
-					((LoadingBayAgent) baseAgent).readyOrderID = orderID;
-					addBehaviour(new PackagingPhaseMessageSender());
+					addBehaviour(new PackagingPhaseMessageSender(orderID));
 				}
 			} else {
 				block();
