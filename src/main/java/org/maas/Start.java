@@ -74,10 +74,6 @@ public class Start {
         if(packagingStage) {
             Initializer init = new PackagingStageInitializer();
             sb.append(init.initialize(scenarioDirectory));
-            
-            Initializer boardInit = new BoardVisualisationInitializer(endTime);
-            sb.append(boardInit.initialize(scenarioDirectory));
-            
             endTime = "002.01.00";
         }
         if(deliveryStage) {
@@ -86,6 +82,9 @@ public class Start {
         if(visualizationStage) {
             Initializer init = new VisualizationInitializer();
             sb.append(init.initialize(scenarioDirectory));
+            
+            Initializer boardInit = new BoardVisualisationInitializer(endTime);
+            sb.append(boardInit.initialize(scenarioDirectory));
         }
         if(isHost) {
             sb.append("timekeeper:org.maas.agents.TimeKeeper(" + scenarioDirectory + ", " + endTime + ");");
