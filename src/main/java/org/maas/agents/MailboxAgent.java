@@ -50,8 +50,9 @@ public class MailboxAgent extends BaseAgent {
 				ACLMessage orderConfirmation = new ACLMessage(ACLMessage.INFORM);
 				
 				JSONObject truckMessageData = new JSONObject(truckMessageContent);
-				String orderID = truckMessageData.getString("OrderID");
-				String customerID = truckMessageData.getString("OrderDeliveredTo");
+				
+				String orderID = truckMessageData.getJSONObject("DeliveryStatus").getString("OrderID");
+				String customerID = truckMessageData.getJSONObject("DeliveryStatus").getString("OrderDeliveredTo");
 				
 				orderConfirmation.setContent(truckMessageContent);
 				orderConfirmation.addReceiver(new AID(customerID, AID.ISLOCALNAME));
