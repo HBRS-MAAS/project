@@ -79,7 +79,8 @@ public class CustomerAgent extends BaseAgent {
 		register("customer", customerID);
 
         //addBehaviour(new isNewOrderChecker());
-        addBehaviour(new GetCurrentOrder());
+		addBehaviour(new GetCurrentOrder());
+		addBehaviour(new ReceiveOrderConfirmation());
     }
 
     protected void takeDown() {
@@ -363,6 +364,26 @@ public class CustomerAgent extends BaseAgent {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}			
+		}
+	}
+	//mailbox
+	private class ReceiveOrderConfirmation extends CyclicBehaviour {
+		private MessageTemplate mt;
+
+		public void action() {
+			mt = MessageTemplate.and(MessageTemplate.MatchSender(new AID("MailboxAgent", AID.ISLOCALNAME)),
+					MessageTemplate.MatchPerformative(ACLMessage.INFORM));
+			ACLMessage msg = myAgent.receive(mt);
+			
+			if (msg != null) {
+				System.out.println("\n\n["+getAID().getLocalName()+"]: Received order completion message from "+msg.getSender().getLocalName()+":\n"+msg.getContent());
+				//System.out.println("Triggering System Shutdown");
+				//myAgent.addBehaviour(new shutdown());
+			}
+
+			else {
+				block();
+			}
 		}
 	}
     
