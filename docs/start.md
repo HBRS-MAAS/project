@@ -6,8 +6,8 @@
 | ------------------|:-------------------------------------------------:|
 |-isHost {ip}       |starts a main Container                            |
 |-localPort {port}  |sets the Port on which the host ist listening      |
-|-host {host}       |setting a host address for an peripheral container |
-|-port {ip}         |sets the port to connect to                        |
+|-host {ip}         |setting a host address for an peripheral container |
+|-port {port}       |sets the port to connect to                        |
 |-customer          |enables customer agents to start                   |
 |-orderProcessing   |enables orderProcessing agents to start            |
 |-doughPrep         |enables doughPrep agents to start                  |
