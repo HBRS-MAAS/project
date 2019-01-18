@@ -1,14 +1,12 @@
-# Start Class Proposal
+# Start Class Proposal 
 
-## Starting
-
-Possible to give commandline arguments:
+## Starting Possible to give commandline arguments: 
 
 |command            |effect                                             |
 | ------------------|:-------------------------------------------------:|
-|-isHost            |starts a main Container                            |
+|-isHost {ip}       |starts a main Container                            |
 |-localPort {port}  |sets the Port on which the host ist listening      |
-|-host {host}       |setting a host address for an peripheral container |
+|-host {ip}         |setting a host address for an peripheral container |
 |-port {port}       |sets the port to connect to                        |
 |-customer          |enables customer agents to start                   |
 |-orderProcessing   |enables orderProcessing agents to start            |
@@ -17,10 +15,11 @@ Possible to give commandline arguments:
 |-packaging         |enables packaging agents to start                  |
 |-delivery          |enables delivery agents to start                   |
 |-visualization     |enables visualization agents to start              |
+|-noTK              |disables TimeKeeper agent to start                 |
 
 ## Default arguments
 
-In default the program will be executed as host (main-container) and starting only the TimeKeeperAgent. The port is set to 8133 in default.
+In default the program will be executed as host (main-container) and starting only the TimeKeeperAgent and DummyAgent. The port is set to 8133 in default.
 
 When starting a peripheral container in default localhost is set as host using port 8133.
 
