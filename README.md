@@ -22,15 +22,15 @@ Just install gradle and run:
 
 For server/host machine
 
-    gradle run --args="-isHost 192.168.1.123 -port 5555 -stage1 -stage2 ... -noTK"
+    gradle run --args="-isHost 192.168.1.123 -localPort 5555 -stage1 -stage2 ... -noTK"
 
 For client machines
 
-    gradle run --args="-host 192.168.1.123 -localPort 5555 -stage3 -noTK"
+    gradle run --args="-host 192.168.1.123 -port 5555 -stage3 -noTK"
     
 For the client which executes gradle command later than every other machine
 
-    gradle run --args="-host 192.168.1.123 -localPort 5555 -stageN"
+    gradle run --args="-host 192.168.1.123 -port 5555 -stageN"
 
 
 It will automatically get the dependencies and start JADE with the configured agents.
