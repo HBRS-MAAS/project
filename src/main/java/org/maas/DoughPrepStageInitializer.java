@@ -33,6 +33,8 @@ public class DoughPrepStageInitializer extends Initializer {
 
             agents.add("DoughManager_" + bakeryId + ":org.mas_maas.agents.DoughManager(" + scenarioPath + "," + bakeryId +")");
 
+			agents.add("Proofer_" + bakeryId + ":org.maas.agents.Proofer(" + bakeryId + ")");
+
 
         }
 
