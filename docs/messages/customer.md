@@ -42,6 +42,17 @@ Message exchanges between CustomerAgent and OrderProcessingAgent
 - **receiver**: customer agent
 - **content**: <String>
 
+- **performative**: INFORM
+- **sender**: mailbox agent
+- **receiver**: customer agent
+- **content**: { "DeliveryStatus": {
+                "OrderDeliveredTo": "Customer-001",
+                "DayOfDelivery": 35,
+                "TimeOfDelivery": 16,
+                "NumOfBoxes": 5,
+              }
+                  }
+
 
 
 
