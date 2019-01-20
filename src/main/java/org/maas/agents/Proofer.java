@@ -98,12 +98,12 @@ public class Proofer extends BaseAgent {
                // Production time is from midnight to lunch (from 00.00 hrs to 12 hrs)
                if ((baseAgent.getCurrentTime().greaterThan(new Time(baseAgent.getCurrentDay(), 0, 0)) ||
 
-                       baseAgent.getCurrentTime().equals(new Time(baseAgent.getCurrentDay(), 0, 0))) &&
+                    baseAgent.getCurrentTime().equals(new Time(baseAgent.getCurrentDay(), 0, 0))) &&
 
-                       baseAgent.getCurrentTime().lessThan(new Time(baseAgent.getCurrentDay(), 12, 0)))
+                    baseAgent.getCurrentTime().lessThan(new Time(baseAgent.getCurrentDay(), 12, 0)))
                 {
 
-                   isInProductionTime.set(true);
+                    isInProductionTime.set(true);
                 }
                 else{
 
@@ -175,7 +175,8 @@ public class Proofer extends BaseAgent {
                     isAvailable = false;
 
                     String content = msg.getContent();
-                    System.out.println(getAID().getLocalName() + " WILL perform Proofing for " + msg.getSender().getLocalName() + ": " + content);
+                    // System.out.println(getAID().getLocalName() + " WILL perform Proofing for \n \t"
+                    //                     + msg.getSender().getLocalName() + ": " + content);
 
                     ProofingRequest proofingRequest = JSONConverter.parseProofingRequest(content);
 
@@ -208,7 +209,7 @@ public class Proofer extends BaseAgent {
             if (proofingCounter.get() < proofingTime){
                 if (!proofingInProcess.get()){
                     // System.out.println("======================================");
-                    // System.out.println("----> " + getAID().getLocalName() + " Proofing for " + proofingTime + " " + productType);
+                    // System.out.println(getAID().getLocalName() + " Proofing for " + proofingTime + " product " + productType);
                     // System.out.println("======================================");
                     proofingInProcess.set(true);
                     isAvailable = false;
@@ -218,9 +219,9 @@ public class Proofer extends BaseAgent {
                 proofingInProcess.set(false);
                 isAvailable = true;
                 proofingCounter.set(0);
-                System.out.println("======================================");
-                System.out.println(getAID().getLocalName() + " Finishing proofing " + productType + guids);
-                System.out.println("======================================");
+                // System.out.println("======================================");
+                System.out.println(getAID().getLocalName() + " finished proofing " + productQuantities + " "+ productType + " for guids" + guids);
+                // System.out.println("======================================");
 
                 addBehaviour(new SendDoughNotification());
             }
@@ -250,7 +251,7 @@ public class Proofer extends BaseAgent {
 
                     baseAgent.sendMessage(msg);
 
-                    System.out.println("----> " + getAID().getLocalName() + " Sent dough Notification to " + bakingInterfaceAgent);
+                    // System.out.println(getAID().getLocalName() + " Sent dough Notification to " + bakingInterfaceAgent);
                     messageProcessing.getAndDecrement();
                     option = 1;
                     break;
