@@ -121,7 +121,7 @@ public class Proofer extends BaseAgent {
 
            MessageTemplate mt = MessageTemplate.and(
                MessageTemplate.MatchPerformative(ACLMessage.CFP),
-               MessageTemplate.MatchConversationId("proofing-request"));
+               MessageTemplate.MatchConversationId("proofing-Request"));
 
            ACLMessage msg = baseAgent.receive(mt);
 
