@@ -37,4 +37,9 @@ public class ProductStatus {
         return product;
     }
 
+    @Override
+    public String toString() {
+        return "ProductStatus [guid=" + guid + ", status=" + status + ", amount=" + amount + "]";
+    }
+
 }

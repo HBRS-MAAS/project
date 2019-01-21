@@ -53,6 +53,7 @@ public class CustomerAgent extends BaseAgent {
 	private int sum_sent; //number of sent orders
 	private int sum_total; //number o total orders
 	private boolean process_done; //wait until communication with order processing finished
+    private boolean verbose=false; // decision for printing
 
     protected void setup() {
     	super.setup();
@@ -70,7 +71,7 @@ public class CustomerAgent extends BaseAgent {
 				
 		getSellers();
 		
-		//System.out.println(customerName + " will send order to " + sellerAgents.length + " sellers");
+		//print(customerName + " will send order to " + sellerAgents.length + " sellers");
 		
 		retrieve("src/main/resources/config/small/clients.json");
 		sum_total = getOrder(customerID);
@@ -79,7 +80,8 @@ public class CustomerAgent extends BaseAgent {
 		register("customer", customerID);
 
         //addBehaviour(new isNewOrderChecker());
-        addBehaviour(new GetCurrentOrder());
+		addBehaviour(new GetCurrentOrder());
+		addBehaviour(new ReceiveOrderConfirmation());
     }
 
     protected void takeDown() {
@@ -105,6 +107,12 @@ public class CustomerAgent extends BaseAgent {
         }
 	}
 	
+    private void print(String str){
+        if (this.verbose){
+            System.out.println(str);
+        }
+    }
+
 	private class GetCurrentOrder extends Behaviour {
 		private boolean isDone = false;
 		private boolean passTime = false;
@@ -118,25 +126,25 @@ public class CustomerAgent extends BaseAgent {
 			int hour = getCurrentHour();
 			int day = getCurrentDay();
 			
-			//System.out.println("current hour: " + getCurrentHour());
-			//System.out.println("current day: " + getCurrentDay());
+			//print("current hour: " + getCurrentHour());
+			//print("current day: " + getCurrentDay());
 			
 			if (day > latestOrder[0] && hour > latestOrder[1]) {
-				System.out.println("It passed time");
+				print("It passed time");
 				passTime = true;
 			} else {
-				//System.out.println("continue ...");
+				//print("continue ...");
 				passTime = false;
 				
 				//Get Order at Specified Time
 				ArrayList<JSONObject> orderList = getCurrentOrder(hour, day);
 				JSONObject order = new JSONObject();
 				
-				//System.out.println(orderList.size());
+				//print(orderList.size());
 				
 		    	while (orderList.size() > 0) {
 		    		order = orderList.remove(0);
-		    		System.out.println(order);
+		    		print(order.toString());
 		    		CustomerAgent.this.addBehaviour(new CallForProposal(order));
 		    		sum_sent++;
 		    		process_done = false;
@@ -153,15 +161,15 @@ public class CustomerAgent extends BaseAgent {
 			msg.setContent("We don't want to buy anything now!");
 			sendMessage(msg);
 			
-	    	//System.out.println("call finish");
+	    	//print("call finish");
 	    	finished();
 	    	isDone = true;	    	
 		}
 
 		@Override
 		public boolean done() {
-			//System.out.println(sum_sent);
-			//System.out.println(sum_total);
+			//print(sum_sent);
+			//print(sum_total);
 			
 			if (process_done && (sum_sent >= sum_total || passTime == true)) {
 				addBehaviour(new shutdown());
@@ -206,7 +214,7 @@ public class CustomerAgent extends BaseAgent {
 				msg.addReceiver(sellerAgents[i]);
 			}
 			
-			//System.out.println("myOrder: " + myOrder.toString());
+			//print("myOrder: " + myOrder.toString());
 			
 			myOrder = includeLocation(myOrder);		    	
     		
@@ -220,7 +228,7 @@ public class CustomerAgent extends BaseAgent {
 				msg.setReplyWith("order-"+System.currentTimeMillis()); // Unique value
 				sendMessage(msg);
 				
-				System.out.println(customerID + " send order: " + msg.getContent().toString());
+				print(customerID + " send order: " + msg.getContent().toString());
 				
 				// Prepare the template to get proposals
 				mt = MessageTemplate.and(MessageTemplate.MatchConversationId(orderID),
@@ -249,7 +257,7 @@ public class CustomerAgent extends BaseAgent {
 		private int receivedReply = 0;
 		
 		ReceiveProposal(MessageTemplate mt, JSONObject order) {
-			//System.out.println("Received Proposal");
+			//print("Received Proposal");
 			myTemplate = mt;
 			myOrder = order;
 		}		
@@ -260,7 +268,7 @@ public class CustomerAgent extends BaseAgent {
 			
 			if (message != null) {
 				//Purchase order reply received
-				//System.out.println("Received Message: " + message.getContent());
+				//print("Received Message: " + message.getContent());
 				String bakeryName = message.getSender().getLocalName();
 				JSONObject products = new JSONObject();
 				
@@ -283,11 +291,11 @@ public class CustomerAgent extends BaseAgent {
 					receivedReply++;
 				}
 				
-				System.out.println("Received reply = " + receivedReply);
+				print("Received reply = " + receivedReply);
 				
 				if (receivedReply == sellerAgents.length) {
-					//System.out.println(receivedReply);
-					System.out.println("incomingProposal " + incomingProposal);
+					//print(receivedReply);
+					print("incomingProposal " + incomingProposal);
 					
 					isDone = true;
 					finished();
@@ -295,7 +303,7 @@ public class CustomerAgent extends BaseAgent {
 					if (!incomingProposal.isEmpty()) {
 						CustomerAgent.this.addBehaviour(new SendConfirmation(incomingProposal, myOrder, proposalSender));
 					} else {
-						System.out.println("No bakery accept my order.. >_<");
+						print("No bakery accept my order.. >_<");
 					}
 				}  
 			} else {
@@ -346,14 +354,14 @@ public class CustomerAgent extends BaseAgent {
 						confirm.setContent(reOrder.toString());
 						send(confirm);
 						
-						System.out.println(customerID + " accept " + id + ": " + confirm.getContent()); 
+						print(customerID + " accept " + id + ": " + confirm.getContent()); 
 					} else {
 						ACLMessage confirm = new ACLMessage(ACLMessage.REJECT_PROPOSAL);
 						confirm.addReceiver(sellers.get(i));
 						confirm.setContent("Your bakery is too expensive.. :(");
 						send(confirm);
 						
-						System.out.println(customerID + " reject " + id + ": " + confirm.getContent());
+						print(customerID + " reject " + id + ": " + confirm.getContent());
 					}
 	            }
 				
@@ -363,6 +371,26 @@ public class CustomerAgent extends BaseAgent {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}			
+		}
+	}
+	//mailbox
+	private class ReceiveOrderConfirmation extends CyclicBehaviour {
+		private MessageTemplate mt;
+
+		public void action() {
+			mt = MessageTemplate.and(MessageTemplate.MatchSender(new AID("MailboxAgent", AID.ISLOCALNAME)),
+					MessageTemplate.MatchPerformative(ACLMessage.INFORM));
+			ACLMessage msg = myAgent.receive(mt);
+			
+			if (msg != null) {
+				print("\n\n["+getAID().getLocalName()+"]: Received order completion message from "+msg.getSender().getLocalName()+":\n"+msg.getContent());
+				//print("Triggering System Shutdown");
+				//myAgent.addBehaviour(new shutdown());
+			}
+
+			else {
+				block();
+			}
 		}
 	}
     
@@ -397,7 +425,7 @@ public class CustomerAgent extends BaseAgent {
   					location = dataArray.getJSONObject(i).get("location");
   					
   					//Should the length reduced by one?
-  					System.out.println(customerID + " has " + (orders.length() - 1) + " order");
+  					print(customerID + " has " + (orders.length() - 1) + " order");
   					
   					return orders.length() - 1;
   				}
@@ -416,8 +444,8 @@ public class CustomerAgent extends BaseAgent {
   		int[] lastDate = new int[2];
   		
   		try {
-  			System.out.println("get time from orders");
-  			System.out.println(orders.length());
+  			print("get time from orders");
+  			// System.out.println(orders.length());
 			for (int i = 0; i < orders.length(); i++) {
 				order_time = orders.getJSONObject(i).getJSONObject("order_date");
 				
@@ -428,7 +456,7 @@ public class CustomerAgent extends BaseAgent {
 			}
 		
   		} catch (JSONException e) {
-  			System.out.println("fail to get time from orders");
+  			print("fail to get time from orders");
 			e.printStackTrace();
 		}
   		
@@ -441,10 +469,10 @@ public class CustomerAgent extends BaseAgent {
 	    List<Date> sortedDate = DateStream.collect(Collectors.toList());
 	    
 	    /*for (int i = 0; i < sortedDate.size(); i++) {
-	    	System.out.println(sortedDate.get(i).getDay() + " ~~ " + sortedDate.get(i).getHour());
+	    	print(sortedDate.get(i).getDay() + " ~~ " + sortedDate.get(i).getHour());
 	    }*/
 	    
-	    //System.out.println(sortedDate.size());
+	    //print(sortedDate.size());
 	    
 	    lastDate[0] = sortedDate.get(sortedDate.size() - 1).getDay();
 	    lastDate[1] = sortedDate.get(sortedDate.size() - 1).getHour();
@@ -509,7 +537,7 @@ public class CustomerAgent extends BaseAgent {
   	  				int amount = myOrder.getJSONObject("products").getInt(type);
   	  				selectedProduct.put(type, amount);
   	  				
-  	  				//System.out.println("Selected Product: " + selectedProduct.toString());
+  	  				//print("Selected Product: " + selectedProduct.toString());
   	  				
   					confirmation.put(chosenBakery, selectedProduct);	
   				}
@@ -541,7 +569,7 @@ public class CustomerAgent extends BaseAgent {
   			}
   			
   			if (n > 0) {
-  				//System.out.println(orderList.toString());
+  				//print(orderList.toString());
   			}
   			
   		} catch (JSONException e) {
