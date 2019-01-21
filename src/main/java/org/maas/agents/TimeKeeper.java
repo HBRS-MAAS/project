@@ -95,7 +95,7 @@ public class TimeKeeper extends Agent{
         TypeReference<?> type = new TypeReference<Meta>(){};
         Meta m = JsonConverter.getInstance(fileString, type);
         this.singleTimeStep = m.getTimeStep();
-        this.endTime = new Time(m.getDurationInDays() + 1, 0, 0);
+        // this.endTime = new Time(m.getDurationInDays() + 1, 0, 0);
     }
 	
 	protected void takeDown() {
