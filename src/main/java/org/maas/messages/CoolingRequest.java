@@ -16,10 +16,10 @@ public class CoolingRequest {
         this.coolingRequests.add(new CoolingRequestTuple(guid, coolingDuration, quantity));
     }
 
-    @Override
-    public String toString() {
-        return "CoolingRequest [coolingRequests=" + coolingRequests + "]";
-    }
+    // @Override
+    // public String toString() {
+    //     return "CoolingRequest [coolingRequests=" + coolingRequests + "]";
+    // }
 
 
 }
