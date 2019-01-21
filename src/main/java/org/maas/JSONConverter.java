@@ -9,16 +9,6 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.Vector;
 
-import org.maas.messages.BakingNotification;
-import org.maas.messages.BakingRequest;
-import org.maas.messages.CoolingRequest;
-import org.maas.messages.DoughNotification;
-import org.maas.messages.KneadingNotification;
-import org.maas.messages.KneadingRequest;
-import org.maas.messages.LoadingBayMessage;
-import org.maas.messages.PreparationNotification;
-import org.maas.messages.PreparationRequest;
-import org.maas.messages.ProofingRequest;
 import org.maas.Objects.BakedGood;
 import org.maas.Objects.Bakery;
 import org.maas.Objects.Batch;
@@ -38,6 +28,16 @@ import org.maas.Objects.StreetLink;
 import org.maas.Objects.StreetNetwork;
 import org.maas.Objects.StreetNode;
 import org.maas.Objects.Truck;
+import org.maas.messages.BakingNotification;
+import org.maas.messages.BakingRequest;
+import org.maas.messages.CoolingRequest;
+import org.maas.messages.DoughNotification;
+import org.maas.messages.KneadingNotification;
+import org.maas.messages.KneadingRequest;
+import org.maas.messages.LoadingBayMessage;
+import org.maas.messages.PreparationNotification;
+import org.maas.messages.PreparationRequest;
+import org.maas.messages.ProofingRequest;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -326,11 +326,27 @@ public class JSONConverter
         // TODO this will need to be reworked in the future when BakedGood is more fleshed out
         // TODO also this JUST is a bit hacky...
         Vector<BakedGood> bakedGoods = new Vector<BakedGood>();
-        JsonObject jsonProducts = jsonOrder.get("products").getAsJsonObject();
-        for (String bakedGoodName : BakedGood.bakedGoodNames)
+        JsonElement jsonProductsElement = jsonOrder.get("products");
+        if (jsonProductsElement.isJsonArray())
         {
-            int amount = jsonProducts.get(bakedGoodName).getAsInt();
-            bakedGoods.add(new BakedGood(bakedGoodName, amount));
+            JsonArray jsonProducts = jsonProductsElement.getAsJsonArray();
+            for (JsonElement product : jsonProducts)
+            {
+                JsonObject jsonProduct = product.getAsJsonObject();
+                //System.out.println(jsonProduct);
+                String name = jsonProduct.get("name").getAsString();
+                int amount = jsonProduct.get("amount").getAsInt();
+                bakedGoods.add(new BakedGood(name, amount));
+            }
+        }
+        else
+        {
+            JsonObject jsonProducts = jsonProductsElement.getAsJsonObject();
+            for (String bakedGoodName : BakedGood.bakedGoodNames)
+            {
+                int amount = jsonProducts.get(bakedGoodName).getAsInt();
+                bakedGoods.add(new BakedGood(bakedGoodName, amount));
+            }
         }
 
         OrderMas anOrder = new OrderMas(customerId, orderGuid, orderDay, orderHour, deliveryDay, deliveryHour, bakedGoods);
@@ -508,6 +524,14 @@ public class JSONConverter
         JsonObject jsonPreparationNotification = root.getAsJsonObject();
 
         String productType = jsonPreparationNotification.get("productType").getAsString();
+        Vector<Integer> productQuantities = new Vector<Integer>();
+        JsonArray jsonProductQuantities = jsonPreparationNotification.get("productQuantities").getAsJsonArray();
+
+        for (JsonElement productQuantity : jsonProductQuantities)
+        {
+            productQuantities.add(productQuantity.getAsInt());
+        }
+
         Vector<String> guids = new Vector<String>();
         JsonArray jsonGuids = jsonPreparationNotification.get("guids").getAsJsonArray();
         for (JsonElement guid : jsonGuids)
@@ -515,7 +539,7 @@ public class JSONConverter
             guids.add(guid.getAsString());
         }
 
-        PreparationNotification preparationNotification = new PreparationNotification(guids, productType);
+        PreparationNotification preparationNotification = new PreparationNotification(guids, productType, productQuantities);
         return preparationNotification;
     }
 
@@ -588,6 +612,8 @@ public class JSONConverter
         JsonObject jsonBakingRequest = root.getAsJsonObject();
 
         int bakingTemp = jsonBakingRequest.get("bakingTemp").getAsInt();
+        int productPerSlot = jsonBakingRequest.get("productPerSlot").getAsInt();
+
         Float bakingTime = jsonBakingRequest.get("bakingTime").getAsFloat();
         String productType = jsonBakingRequest.get("productType").getAsString();
 
@@ -605,7 +631,15 @@ public class JSONConverter
             productQuantities.add(productQuantitie.getAsInt());
         }
 
-        BakingRequest bakingRequest = new BakingRequest(guids, productType, bakingTemp, bakingTime, productQuantities);
+        Vector<Integer> slotsNeeded = new Vector<Integer>();
+        JsonArray jsonSlotsNeeded = jsonBakingRequest.get("slotsNeeded").getAsJsonArray();
+        for (JsonElement slotNeeded : jsonSlotsNeeded)
+        {
+            slotsNeeded.add(slotNeeded.getAsInt());
+        }
+
+
+        BakingRequest bakingRequest = new BakingRequest(guids, productType, bakingTemp, slotsNeeded, bakingTime, productQuantities, productPerSlot);
         return bakingRequest;
     }
 
@@ -642,10 +676,10 @@ public class JSONConverter
         JsonArray jsonCoolingRequests = root.getAsJsonArray();
         for (JsonElement jsonCoolingRequest : jsonCoolingRequests)
         {
-            JsonObject CoolingRequeatjson = jsonCoolingRequest.getAsJsonObject();
-            String guid = CoolingRequeatjson.get("guid").getAsString();
-            int quantity = CoolingRequeatjson.get("quantity").getAsInt();
-            float coolingDuration = CoolingRequeatjson.get("coolingDuration").getAsFloat();
+            JsonObject CoolingRequestjson = jsonCoolingRequest.getAsJsonObject();
+            String guid = CoolingRequestjson.get("guid").getAsString();
+            int quantity = CoolingRequestjson.get("quantity").getAsInt();
+            float coolingDuration = CoolingRequestjson.get("coolingDuration").getAsFloat();
 
             coolingRequest.addCoolingRequest(guid, coolingDuration, quantity);
         }
