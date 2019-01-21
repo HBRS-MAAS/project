@@ -69,7 +69,7 @@ public class TimeKeeper extends Agent{
             endTime = new Time(endTimeString);
         } else {
             scenarioDirectory = "small";
-            endTime = new Time(0,12,0);
+            endTime = new Time(1,12,0);
         }
         this.readSingleTimeStepFromMeta(scenarioDirectory);
 
@@ -95,6 +95,7 @@ public class TimeKeeper extends Agent{
         TypeReference<?> type = new TypeReference<Meta>(){};
         Meta m = JsonConverter.getInstance(fileString, type);
         this.singleTimeStep = m.getTimeStep();
+        // this.endTime = new Time(m.getDurationInDays() + 1, 0, 0);
     }
 	
 	protected void takeDown() {
