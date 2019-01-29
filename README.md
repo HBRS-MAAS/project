@@ -38,6 +38,23 @@ In case you want to clean you workspace run
 
     gradle clean
 
+### Test
+For testing baking stage
+
+    gradle run --args="-baking"
+
+For testing packaging stage
+    
+    gradle run --args="-packaging"
+    
+For testing board visualization (**right brothers**). Please note that, the platform will shut down after visualizer window is closed using close (X) button or menu at top right.
+
+	gradle run --args="-visualization"
+	
+For testing multiple stages with visualization
+
+	gradle run --args="-baking -packaging -visualization"
+	
 ## Eclipse
 To use this project with eclipse run
 
