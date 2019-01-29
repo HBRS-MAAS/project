@@ -27,7 +27,7 @@ For server/host machine
 For client machines
 
     gradle run --args="-host 192.168.1.123 -port 5555 -stage3 -noTK"
-    
+
 For the client which executes gradle command later than every other machine
 
     gradle run --args="-host 192.168.1.123 -port 5555 -stageN"
@@ -37,6 +37,14 @@ It will automatically get the dependencies and start JADE with the configured ag
 In case you want to clean you workspace run
 
     gradle clean
+
+### Run only the **Dough Preparation Stage** with **visualization**
+
+    gradle run --args='-doughPrepVisual -scenarioDirectory nameScenarioDirectory'
+
+Example:
+
+    gradle run --args='-doughPrepVisual -scenarioDirectory small'
 
 ## Eclipse
 To use this project with eclipse run
