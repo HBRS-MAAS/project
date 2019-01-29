@@ -110,15 +110,8 @@ public class LayoutController implements Initializable, ScenarioAware {
 	    				controller.clear();
 	    			}
 	    	    	
-	    	    	long delayInSeconds=0;
-	    	        for(int index=0; index<timelineItems.size(); index++) {
-	    	        	TimelineItem item = timelineItems.get(index);
-	    	        	
-	    	        	if(index == 0 || item.getTime().greaterThan(timelineItems.get(index-1).getTime())) {
-	    	        		delayInSeconds+=1;
-	    	        	}
-	    	        	
-	    	    		SimulationTask task = new SimulationTask(delayInSeconds * 1000, item);
+	    	        if(timelineItems.size() > 0) {
+	    	    		SimulationTask task = new SimulationTask(0, 1);
 	    	    		Thread taskThread = new Thread(task);
 	    	    		taskThread.start();
 	    	        }
@@ -134,32 +127,45 @@ public class LayoutController implements Initializable, ScenarioAware {
 	}
 	
 	private class SimulationTask extends Task<Void> {
-	    private final long delayInMilliSeconds;
-	    private final TimelineItem item;
+	    private int timelineItemIndex;
+	    private final int intervalInSeconds;
 
-	    public SimulationTask(long delayInMilliSeconds, TimelineItem item) {
-	        this.delayInMilliSeconds = delayInMilliSeconds;
-	        this.item = item;
+	    public SimulationTask(int timelineItemIndex, int intervalInSeconds) {
+	        this.timelineItemIndex = timelineItemIndex;
+	        this.intervalInSeconds = intervalInSeconds;
 	    }
 
 	    @Override
 	    protected Void call() throws Exception {
 	    	try {
-  		      Thread.sleep(delayInMilliSeconds);
+  		      Thread.sleep(intervalInSeconds * 1000L);
   		    } catch (Exception e) {
   		    }
   		    
           	Platform.runLater(
   					  () -> {
-  		                	for(StageController controller: controllers) {
-  		        				controller.updateStage(item.getMessageType(), item.getMessage());
-  		        			}
-  		                	
-  		                	timeDisplay.setText(item.getTime().toString());
-  		                	
-  		                	if(timelineItems.indexOf(item) == timelineItems.size()-1) {
-  		                		isReplaying = false;
-  		                	}
+  						  	if(timelineItemIndex < timelineItems.size()) {
+  						  		timeDisplay.setText(timelineItems.get(timelineItemIndex).getTime().toString());
+  						  	
+  						  		int index = timelineItemIndex;
+  						  		while(index < timelineItems.size() && 
+  						  				timelineItems.get(index).getTime().equals(timelineItems.get(timelineItemIndex).getTime())) {
+					  				TimelineItem item = timelineItems.get(index);
+						  		
+		  		                	for(StageController controller: controllers) {
+		  		        				controller.updateStage(item.getMessageType(), item.getMessage());
+		  		        			}
+		  		                	index++;
+					  			}
+	  		                	
+	  		                	if(index >= timelineItems.size()) {
+	  		                		isReplaying = false;
+	  		                	} else {
+	  		                		SimulationTask task = new SimulationTask(index, intervalInSeconds);
+	  			    	    		Thread taskThread = new Thread(task);
+	  			    	    		taskThread.start();
+	  		                	}
+  						  	}
   					  }
   					);
 

@@ -13,6 +13,9 @@ public class BakingCardController implements Initializable {
 	private Label title;
 	
 	@FXML
+	private Label bakery;
+	
+	@FXML
 	private Label description;
 
 
@@ -24,6 +27,7 @@ public class BakingCardController implements Initializable {
 	
 	public void setText(BakingStageCard card) {
 		String title = card.getProductId();
+		String bakeryId = card.getBakeryId();
 		String description = Integer.toString(
 					card.getOrders()
 					.stream()
@@ -33,6 +37,7 @@ public class BakingCardController implements Initializable {
 				
 		
 		this.title.setText(title);
+		this.bakery.setText(bakeryId);
 		this.description.setText(description);
 		
 		Tooltip toolTip = new Tooltip(description);

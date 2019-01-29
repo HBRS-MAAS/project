@@ -1,5 +1,10 @@
 package org.right_brothers.agents;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+
 import org.maas.agents.BaseAgent;
 import org.maas.agents.TimeKeeper;
 import org.maas.utils.Time;
@@ -43,6 +48,10 @@ public class VisualizationAgent extends BaseAgent {
         };
     	thread.start();
         
+    	
+		Arrays.stream(LogManager.getLogManager().getLogger("")
+				.getHandlers()).forEach(h -> h.setLevel(Level.SEVERE));
+		
     	guiWindow = Visualizer.waitForInstance();
 		addBehaviour(new MessageServer());
 	}
@@ -63,10 +72,18 @@ public class VisualizationAgent extends BaseAgent {
 
     private class MessageServer extends CyclicBehaviour {
         public void action() {
+        	 List<String> visualizedMessages = Arrays
+         			.asList("^([\\w\\-]+)\\-baking-request$", "^[\\w\\-]+\\-cooled\\-product\\-\\d+$", "^[\\w\\-]+\\-packaged-orders$");
+        	 
         	MessageTemplate mt = MessageTemplate.not(MessageTemplate.MatchPerformative(TimeKeeper.BROADCAST_TIMESTEP_PERFORMATIVE));
             ACLMessage msg = myAgent.receive(mt);
-            if (msg != null) {
-                guiWindow.updateBoard(msg.getConversationId().toLowerCase(), msg.getContent());
+        	
+            if (msg != null && msg.getConversationId() != null) {
+            	String conversationId = msg.getConversationId().toLowerCase();
+            	boolean isVisualizationMessage = visualizedMessages.stream().anyMatch( pattern -> conversationId.matches(pattern));
+            	if(isVisualizationMessage) {
+            		guiWindow.updateBoard(msg.getConversationId().toLowerCase(), msg.getContent());
+            	}
             }
             else {
                 block();
