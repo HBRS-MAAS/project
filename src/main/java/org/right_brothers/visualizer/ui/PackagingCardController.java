@@ -12,6 +12,9 @@ public class PackagingCardController implements Initializable {
 	private Label title;
 	
 	@FXML
+	private Label bakery;
+	
+	@FXML
 	private Label description;
 
 	@Override
@@ -23,9 +26,11 @@ public class PackagingCardController implements Initializable {
 	public void setText(PackagingStageCard card) {
 		if (card != null && card.getProduct() != null) {
 			String title = card.getProduct().getItemText();
+			String bakeryId = card.getBakeryId();
 			String description = Integer.toString(card.getProduct().getQuantity());
 			
 			this.title.setText(title);
+			this.bakery.setText(bakeryId);
 			this.description.setText(description);
 		}
 	}

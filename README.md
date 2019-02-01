@@ -62,6 +62,25 @@ Note that, at the moment, the simulation time is very short, and so the graph vi
 For detailed documentation about the design and usage of the graph visualization [click here](docs/visualizer/commitment_issues/VIsualizationDocument.pdf).
 The descriptions of the messages required by the visualization agent can be found [here](docs/messages/GraphVisualization.md). 
 
+
+### Testing Baking
+For testing baking stage
+
+    gradle run --args="-baking"
+
+For testing packaging stage
+    
+    gradle run --args="-packaging"
+    
+For testing board visualization (**right brothers**). Please note that, the platform will shut down after visualizer window is closed using close (X) button or menu at top right.
+
+	gradle run --args="-visualization"
+	
+For testing multiple stages with visualization
+
+	gradle run --args="-baking -packaging -visualization"
+	
+
 ## Eclipse
 To use this project with eclipse run
 

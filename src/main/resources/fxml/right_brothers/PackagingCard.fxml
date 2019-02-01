@@ -27,6 +27,11 @@
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
+            <Label fx:id="bakery" AnchorPane.rightAnchor="0.0">
+               <font>
+                  <Font name="System Italic" size="11.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
       <AnchorPane prefWidth="200.0">
