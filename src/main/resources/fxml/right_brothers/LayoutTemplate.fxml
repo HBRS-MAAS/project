@@ -243,7 +243,12 @@
                                                    <children>
                                                       <AnchorPane>
                                                          <children>
-                                                            <Label text="Berliner" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                                            <Label text="Berliner" AnchorPane.leftAnchor="0.0">
+                                                               <font>
+                                                                  <Font name="System Bold" size="13.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <Label text="Berliner" AnchorPane.rightAnchor="0.0">
                                                                <font>
                                                                   <Font name="System Bold" size="13.0" />
                                                                </font>

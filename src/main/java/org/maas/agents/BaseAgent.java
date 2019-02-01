@@ -129,33 +129,42 @@ public abstract class BaseAgent extends Agent {
     protected void visualiseMessageQueuesByAgent(ACLMessage msg) {
     }
     protected void visualiseOrderBoard(ACLMessage msg) {
+    	String bakingOutputConversationPattern = "^dough-notification$";
+    	String loadingBayOutputConversationPattern = "^packaged-orders$";
+    	
     	List<String> visualizedMessages = Arrays
-    			.asList("^baking-request$", "^[\\w\\-]+\\-cooled\\-product\\-\\d+$", "^packaged-orders$");
+    			.asList(bakingOutputConversationPattern, "^[\\w\\-]+\\-cooled\\-product\\-\\d+$", loadingBayOutputConversationPattern);
     	
     	if(msg != null && msg.getConversationId() != null) {
     		String conversationId = msg.getConversationId().toLowerCase();
     		
-    		for(String pattern : visualizedMessages) {
-    			if(conversationId.matches(pattern)) {
-	    	    	msg.clearAllReceiver();
-	    	    	msg.addReceiver(visualisationAgent);
-	    	    	
-	    	    	// Add bakery id with conversation for baking request and packaged orders
-	    	    	if(!pattern.equals(visualizedMessages.get(1))) {
-	    	    		Matcher bakeryMatcher = Pattern.compile("^(\\w+)\\-(\\d+)\\-")
-	    	    				.matcher(msg.getSender().getLocalName());
-	    	    		
-	    	    		if(bakeryMatcher.lookingAt()) {
-	    	        		msg.setConversationId(
-	    	        				bakeryMatcher.group(1)+ "-" + bakeryMatcher.group(2) + "-" + msg.getConversationId()
-    	        				);
-	    	    		}
-	    	    	}
-	    	    	
-	    	    	this.send(msg);
-	    	    	
-	    	    	break;
-    			}
+    		
+    		if(visualizedMessages.stream().anyMatch(pattern -> conversationId.matches(pattern))) {
+    		
+	    		if(conversationId.matches(bakingOutputConversationPattern)) {
+	    			Matcher bakeryMatcher = Pattern.compile("^Proofer_(\\w+)\\-(\\d+)")
+		    				.matcher(msg.getSender().getLocalName());
+		    		
+		    		if(bakeryMatcher.lookingAt()) {
+		        		msg.setConversationId(
+		        				bakeryMatcher.group(1)+ "-" + bakeryMatcher.group(2) + "-baking-request"
+	        				);
+		    		}
+	    		} else if(conversationId.matches(loadingBayOutputConversationPattern)) {
+	    			Matcher bakeryMatcher = Pattern.compile("^(\\w+)\\-(\\d+)\\-")
+    	    				.matcher(msg.getSender().getLocalName());
+    	    		
+    	    		if(bakeryMatcher.lookingAt()) {
+    	        		msg.setConversationId(
+    	        				bakeryMatcher.group(1)+ "-" + bakeryMatcher.group(2) + "-" + msg.getConversationId()
+	        				);
+    	    		}
+	    		}
+	    		
+    	    	msg.clearAllReceiver();
+    	    	msg.addReceiver(visualisationAgent);
+    	    	
+    	    	this.send(msg);
     		}
     	}
     }
