@@ -15,6 +15,7 @@ public class Start {
     private static boolean customerStage = false;
     private static boolean orderProcessingStage = false;
     private static boolean doughPrepStage = false;
+    private static boolean doughPrepStageVisual = false;
     private static boolean bakingStage = false;
     private static boolean packagingStage = false;
     private static boolean deliveryStage = false;
@@ -69,6 +70,12 @@ public class Start {
             sb.append(init.initialize(scenarioDirectory));
             endTime = "002.06.00";
         }
+        if(doughPrepStageVisual) {
+            //endTime = "004.06.00";
+            endTime = "002.06.00";
+            Initializer init = new DoughStageVisualization();
+            sb.append(init.initialize(scenarioDirectory));
+        }
         if(bakingStage) {
             Initializer init = new BakingStageInitializer();
             sb.append(init.initialize(scenarioDirectory));
@@ -85,7 +92,7 @@ public class Start {
         if(visualizationStage) {
             Initializer init = new VisualizationInitializer();
             sb.append(init.initialize(scenarioDirectory));
-            
+
             Initializer boardInit = new BoardVisualisationInitializer(endTime);
             sb.append(boardInit.initialize(scenarioDirectory));
         }
@@ -133,6 +140,10 @@ public class Start {
             }
             if (args[i].equals("-doughPrep")) {
                 doughPrepStage = true;
+                noAgentStarting = false;
+            }
+            if (args[i].equals("-doughPrepVisual")) {
+                doughPrepStageVisual = true;
                 noAgentStarting = false;
             }
             if (args[i].equals("-baking")) {

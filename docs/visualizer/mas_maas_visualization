@@ -1,0 +1,55 @@
+# Visualization: Stacked line graph
+
+The visualization section of the project is meant to give insight into
+   historical performance and trends of the bakeries.
+
+   Information used for visualization is obtained by the ``LoggerAgent``.
+
+   The ``LoggerAgent`` subscribes and listens to communication between all of the other stages.
+
+   Currently, this is only implemented for the Dough stage. For example, when
+   a kneading machine finishes an order and passes it on to the preparation
+   table, a message must be sent. The message is also captured by the LoggerAgent.
+   When a message is captured, important information such as which machine
+   was being used and at what bakery is stored. This information is tagged with a timestamp and saved to a buffer. The buffer, at the end of every timestep is then written out to a file.   When the entire project reaches the end time, the file where the information was being logged is closed. At this point, a fully functional and correctly
+   formatted CSV exists on the host computer. Before the LoggerAgent yields
+   to the Timekeeper agent for the last time, it parses the CSV file and
+   displays a graph showing the performance. The CSV can be used for debugging or more elaborate data analysis later.
+
+   If the logger does not receive any messages the CSV file will be blank or not overwritten, therefore the graph will be blank or will display old data. The logger agent listens to messages as defined in its setup function.
+
+   The logger agent receives ``DoughNotifications`` from the Proofer agent. The internal dough preparation stages (kneading and preparation) will be displayed if they follow the format used in the internal agents of the ``mas_maas`` team as presented below:
+
+   ### Kneading Notification
+
+
+    {
+    	"guids":[
+    		"order-001",
+    		"order-002"
+    	],
+    	"productType":"Bagel"
+    }
+
+    ## Preparation Notification
+
+    {
+	"productQuantities":[
+		4,
+		2
+	],
+	"guids":[
+		"order-001",
+		"order-002"
+	],
+	"productType":"Bagel"
+}
+
+
+### Run the **Dough Preparation Stage** with **visualization**
+
+    gradle run --args='-doughPrepVisual -scenarioDirectory nameScenarioDirectory'
+
+Example:
+
+    gradle run --args='-doughPrepVisual -scenarioDirectory small'
